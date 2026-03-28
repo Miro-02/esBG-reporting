@@ -15,6 +15,17 @@ export default defineNuxtPlugin((nuxtApp) => {
     icons: {
       defaultSet: 'mdi',
     },
+    defaults: {
+      VCard: { rounded: 'lg' },
+      VBtn: { rounded: 'pill' },
+      VTextField: { rounded: 'lg', variant: 'outlined' },
+      VTextarea: { rounded: 'lg', variant: 'outlined' },
+      VSelect: { rounded: 'lg', variant: 'outlined' },
+      VDialog: { class: 'rounded-dialog' },
+      VMenu: { rounded: 'lg' },
+      VChip: { rounded: 'pill' },
+      VAlert: { rounded: 'lg' },
+    },
     theme: {
       defaultTheme: 'light',
       themes: {

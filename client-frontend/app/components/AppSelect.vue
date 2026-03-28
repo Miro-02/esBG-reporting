@@ -1,5 +1,5 @@
 <template>
-  <v-select v-bind="$attrs">
+  <v-select v-bind="$attrs" rounded="lg" variant="outlined">
     <slot />
   </v-select>
 </template>

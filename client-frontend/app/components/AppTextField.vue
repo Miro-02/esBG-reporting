@@ -1,5 +1,5 @@
 <template>
-  <v-text-field v-bind="$attrs">
+  <v-text-field v-bind="$attrs" rounded="lg" variant="outlined">
     <slot />
   </v-text-field>
 </template>

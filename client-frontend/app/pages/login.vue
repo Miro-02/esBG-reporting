@@ -97,6 +97,7 @@ definePageMeta({
   ssr: false,
 });
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const error = ref("");
@@ -117,7 +118,7 @@ const submit = async () => {
   try {
     const res = await authStore.login(loginRequest);
     localStorage.setItem("token", res.access_token);
-    alert("Login successful!");
+    router.push("/");
   } catch (err: any) {
     const apiError = err.response?.data as ApiError;
     error.value = apiError?.message || "Error";

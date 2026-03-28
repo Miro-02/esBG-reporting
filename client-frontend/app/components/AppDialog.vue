@@ -4,7 +4,7 @@
     @update:model-value="emit('update:modelValue', $event)"
     v-bind="$attrs"
   >
-    <v-card>
+    <v-card rounded="lg">
       <v-card-title v-if="title" v-bind="titleProps">
         {{ title }}
       </v-card-title>
@@ -14,13 +14,13 @@
       <v-card-actions>
         <slot name="actions" />
         <v-spacer v-if="$slots.actions" />
-        <v-btn 
-          v-if="showClose" 
-          text 
+        <AppButton
+          v-if="showClose"
+          variant="text"
           @click="handleClose"
         >
           {{ closeLabel }}
-        </v-btn>
+        </AppButton>
       </v-card-actions>
     </v-card>
   </v-dialog>

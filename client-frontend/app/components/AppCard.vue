@@ -1,5 +1,5 @@
 <template>
-  <v-card v-bind="$attrs">
+  <v-card v-bind="$attrs" rounded="lg">
     <v-card-title v-if="title" v-bind="titleProps">
       {{ title }}
     </v-card-title>
