@@ -27,8 +27,4 @@
     @apply rounded-[24px];
   }
 
-  /* Images */
-  img {
-    @apply rounded-[16px];
-  }
 }

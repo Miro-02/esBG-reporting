@@ -1,121 +1,132 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 flex items-center justify-center py-12 px-4">
-    <!-- Success State -->
-    <div v-if="showSuccess" class="w-full max-w-2xl text-center text-white">
-      <div class="mb-8">
-        <h1 class="text-5xl font-bold mb-4">ESG</h1>
-      </div>
-      
-      <h2 class="text-5xl font-bold mb-8 leading-tight">
-        Your information has been sent successfully!
-      </h2>
-      
-      <p class="text-lg mb-12 text-gray-300">
-        * The account will be verified by our team within 24 hours. An email will be sent to you when it is done so you can start filling out your ESG information.
-      </p>
-      
-      <AppButton 
-        @click="goHome"
-        color="primary"
-        class="px-12 py-3"
-      >
-        Go to home
-      </AppButton>
-    </div>
+  <div class="flex w-screen h-screen">
+    <!-- Left Column: Blue (50%) -->
+    <div class="w-1/2 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 text-white flex flex-col items-center justify-center p-8 lg:p-20">
+      <!-- Brand -->
+      <div class="w-full max-w-md">
+        <img src="/logo.svg" alt="ESG"/>
+        <h2 class="text-3xl font-bold mb-4">Create your company's account</h2>
+        <p class="text-lg mb-12">Use 3 simple steps</p>
 
-    <!-- Registration Form -->
-    <div v-else class="w-full max-w-6xl">
-      <div class="grid grid-cols-2 gap-8 shadow-lg rounded-lg overflow-hidden bg-white">
-        <!-- Left Sidebar -->
-        <div class="bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 p-12 text-white flex flex-col justify-between">
-          <div>
-            <h1 class="text-4xl font-bold mb-4">ESG</h1>
-            <h2 class="text-3xl font-bold mb-4">Create your company's account</h2>
-            <p class="text-lg mb-12">Use 3 simple steps</p>
-          </div>
-
-          <!-- Steps Indicator -->
-          <div class="space-y-8">
-            <div 
-              v-for="(step, index) in steps" 
-              :key="index"
-              class="flex items-start gap-4"
-            >
-              <div class="flex flex-col items-center">
-                <div 
-                  :class="[
-                    'w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm transition-all',
-                    currentStep > index ? 'bg-green-500' : currentStep === index ? 'bg-purple-500' : 'bg-gray-400'
-                  ]"
-                >
-                  {{ currentStep > index ? '✓' : index + 1 }}
-                </div>
-                <div v-if="index < steps.length - 1" class="w-0.5 h-12 bg-gray-400 my-2" />
+        <!-- Steps Indicator -->
+        <div class="space-y-8">
+          <div 
+            v-for="(step, index) in steps" 
+            :key="index"
+            class="flex items-start gap-4"
+          >
+            <div class="flex flex-col items-center">
+              <div 
+                :class="[
+                  'w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm transition-all',
+                  currentStep > index ? 'bg-green-500' : currentStep === index ? 'bg-purple-500' : 'bg-gray-400'
+                ]"
+              >
+                {{ currentStep > index ? '✓' : index + 1 }}
               </div>
-              <div class="pt-1">
-                <p class="font-semibold">{{ step }}</p>
-              </div>
+              <div v-if="index < steps.length - 1" class="w-0.5 h-12 bg-gray-400 my-2" />
             </div>
-          </div>
-
-          <!-- Footer Note -->
-          <div class="mt-12 text-sm text-gray-300">
-            <p>* The account will be verified by our team within 24 hours. An email will be sent to you when it is done so you can start filling out your ESG information.</p>
+            <div class="pt-1">
+              <p class="font-semibold">{{ step }}</p>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Right Content -->
-        <div class="p-12 flex flex-col justify-between">
-          <!-- Step 1: Personal Information -->
-          <div v-if="currentStep === 0" class="space-y-6">
-            <div>
-              <h3 class="text-2xl font-bold mb-2">1st Step</h3>
+    <!-- Right Column: White with Stripes (50%) -->
+    <div class="w-1/2 flex flex-col items-center justify-center p-8 lg:p-24 overflow-y-auto register-right-panel">
+      <!-- Success State -->
+      <div v-if="showSuccess" class="fixed inset-0 w-full h-full bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 flex flex-col items-center justify-center p-8">
+        <!-- Logo in top left -->
+        <div class="absolute top-8 left-8">
+          <img src="/logo.svg" alt="ESG" />
+        </div>
+        
+        <h2 class="text-5xl font-bold mb-8 leading-tight text-white text-center">
+          Your information has been sent successfully!
+        </h2>
+        
+        <p class="text-lg mb-12 text-gray-100 max-w-2xl text-center">
+          * The account will be verified by our team within 24 hours. An email will be sent to you when it is done so you can start filling out your ESG information.
+        </p>
+        
+        <button 
+          @click="goHome"
+          class="px-16 py-3 rounded-full bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors"
+        >
+          Go to home
+        </button>
+      </div>
+
+      <!-- Form Content -->
+      <div v-else class="w-full max-w-xl">
+        <!-- Step 1: Personal Information -->
+        <div v-if="currentStep === 0" class="space-y-8">
+          <header class="mb-10">
+            <h3 class="text-3xl font-bold text-gray-900 mb-2">1st Step</h3>
+            <p class="text-gray-600 text-sm font-medium">Personal information</p>
+          </header>
+
+          <form @submit.prevent="nextStep" class="space-y-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-800">Full company name</label>
+              <AppTextField 
+                v-model="name" 
+                placeholder="Enter your full company name"
+                variant="outlined"
+                size="small"
+              />
             </div>
 
-            <AppTextField 
-              v-model="name" 
-              label="Full company name"
-              placeholder="Enter your full company name"
-              class="mb-4"
-              variant="outlined"
-            />
-            <AppTextField 
-              v-model="email" 
-              label="E-mail"
-              type="email"
-              placeholder="Enter your e-mail"
-              class="mb-4"
-              variant="outlined"
-            />
-            <AppTextField 
-              v-model="phone" 
-              label="Phone number"
-              placeholder="Enter your phone number"
-              class="mb-4"
-              variant="outlined"
-            />
-            <AppTextField 
-              v-model="password" 
-              label="Create your password"
-              type="password"
-              placeholder="Type your password"
-              class="mb-4"
-              variant="outlined"
-              hint="Must be 8 characters at least"
-              persistent-hint
-            />
-            <AppTextField 
-              v-model="password_confirmation" 
-              label="Confirm password"
-              type="password"
-              placeholder="Type your password"
-              class="mb-6"
-              variant="outlined"
-              hint="Must be 8 characters at least"
-              persistent-hint
-            />
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-800">E-mail</label>
+              <AppTextField 
+                v-model="email" 
+                type="email"
+                placeholder="Enter your e-mail"
+                variant="outlined"
+                size="small"
+              />
+            </div>
 
-            <AppAlert v-if="error" type="error" class="mb-4">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-800">Phone number</label>
+              <AppTextField 
+                v-model="phone" 
+                placeholder="Enter your phone number"
+                variant="outlined"
+                size="small"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-800">Create your password</label>
+              <AppTextField 
+                v-model="password" 
+                type="password"
+                placeholder="Type your password"
+                variant="outlined"
+                size="small"
+                hint="Must be 8 characters at least"
+                persistent-hint
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-800">Confirm password</label>
+              <AppTextField 
+                v-model="password_confirmation" 
+                type="password"
+                placeholder="Type your password"
+                variant="outlined"
+                size="small"
+                hint="Must be 8 characters at least"
+                persistent-hint
+              />
+            </div>
+
+            <AppAlert v-if="error" type="error" class="mt-4">
               {{ error }}
             </AppAlert>
 
@@ -124,7 +135,7 @@
               density="comfortable"
             >
               <template #label>
-                <span class="text-sm">
+                <span class="text-xs">
                   By creating an account means you agree to the 
                   <NuxtLink to="/terms-and-conditions" class="text-blue-600 font-semibold">
                     Terms and Conditions
@@ -136,120 +147,91 @@
                 </span>
               </template>
             </v-checkbox>
-          </div>
+            <button
+              type="submit"
+              style="background-color:black"
+              class="w-full py-3 text-white rounded-full font-semibold hover:bg-gray-800"
+            >
+              Sign Up
+            </button>
+            
+          </form>
+        </div>
 
-          <!-- Step 2: ID Card and Video Chat -->
-          <div v-if="currentStep === 1" class="space-y-6">
-            <div>
-              <h3 class="text-2xl font-bold mb-2">2nd Step</h3>
-              <p class="text-gray-600">ID card and video chat</p>
-            </div>
+        <!-- Step 2: ID Card and Video Chat -->
+        <div v-if="currentStep === 1" class="space-y-6">
+          <header class="mb-12">
+            <span class="text-sm font-bold uppercase tracking-widest text-blue-600 mb-2 block">2nd Step</span>
+            <h2 class="text-4xl font-bold tracking-tight text-gray-900">ID card and video chat</h2>
+          </header>
 
-            <div>
-              <p class="font-semibold mb-4">Photo of your ID card</p>
-              
-              <!-- ID Card Upload Grid -->
-              <div class="grid grid-cols-2 gap-6 mb-6">
-                <!-- Front Page -->
-                <div 
-                  class="border-4 border-dashed border-purple-300 rounded-lg p-8 text-center cursor-pointer hover:border-purple-500 transition-colors"
-                  @click="triggerFileInput('idCardFront')"
-                >
-                  <v-icon v-if="!idCardFrontPreview" class="mb-2" color="purple" size="48">
-                    mdi-plus
-                  </v-icon>
-                  <p class="text-sm font-semibold text-gray-700">Add the front page</p>
-                  <input
-                    ref="idCardFrontInput"
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    @change="handleFileUpload('idCardFront', $event)"
-                  />
-                </div>
-
-                <!-- Back Page -->
-                <div 
-                  class="border-4 border-dashed border-purple-300 rounded-lg p-8 text-center cursor-pointer hover:border-purple-500 transition-colors"
-                  @click="triggerFileInput('idCardBack')"
-                >
-                  <v-icon v-if="!idCardBackPreview" class="mb-2" color="purple" size="48">
-                    mdi-plus
-                  </v-icon>
-                  <p class="text-sm font-semibold text-gray-700">Add the back page</p>
-                  <input
-                    ref="idCardBackInput"
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    @change="handleFileUpload('idCardBack', $event)"
-                  />
-                </div>
-              </div>
-
-              <!-- Image Previews -->
-              <div v-if="idCardFrontPreview || idCardBackPreview" class="grid grid-cols-2 gap-6 mb-6">
-                <v-img v-if="idCardFrontPreview" :src="idCardFrontPreview" alt="ID Front" class="rounded-lg" />
-                <v-img v-if="idCardBackPreview" :src="idCardBackPreview" alt="ID Back" class="rounded-lg" />
-              </div>
-            </div>
-
-            <div>
-              <p class="font-semibold mb-4">Start your video chat to verify your identity</p>
+          <div>
+            <p class="font-semibold mb-4">Photo of your ID card</p>
+            
+            <!-- ID Card Upload Grid -->
+            <div class="grid grid-cols-2 gap-6 mb-6">
+              <!-- Front Page -->
               <div 
-                class="border-4 border-dashed border-purple-300 rounded-lg p-12 text-center cursor-pointer hover:border-purple-500 transition-colors"
+                class="border-4 border-dashed border-purple-300 rounded-lg p-8 text-center cursor-pointer hover:border-purple-500 transition-colors"
+                @click="triggerFileInput('idCardFront')"
               >
-                <v-icon class="mb-2" color="purple" size="48">
-                  mdi-camera
-                </v-icon>
-                <p class="text-sm font-semibold text-gray-700">Turn on your camera</p>
-              </div>
-            </div>
-
-            <AppAlert v-if="error" type="error" class="mt-4">
-              {{ error }}
-            </AppAlert>
-          </div>
-
-          <!-- Step 3: Documents -->
-          <div v-if="currentStep === 2" class="space-y-6">
-            <div>
-              <h3 class="text-2xl font-bold mb-2">3rd Step</h3>
-              <p class="text-gray-600">Documents of your title to the firm</p>
-            </div>
-
-            <div>
-              <p class="font-semibold mb-4">Photo of your Documents</p>
-              
-              <div 
-                class="border-4 border-dashed border-purple-300 rounded-lg p-12 text-center cursor-pointer hover:border-purple-500 transition-colors"
-                @click="triggerFileInput('documents')"
-              >
-                <v-icon v-if="!documentsPreview" class="mb-2" color="purple" size="48">
+                <v-icon v-if="!idCardFrontPreview" class="mb-2" color="purple" size="48">
                   mdi-plus
                 </v-icon>
-                <p class="text-sm font-semibold text-gray-700">Document</p>
+                <p class="text-sm font-semibold text-gray-700">Add the front page</p>
                 <input
-                  ref="documentsInput"
+                  ref="idCardFrontInput"
                   type="file"
                   accept="image/*"
                   hidden
-                  @change="handleFileUpload('documents', $event)"
+                  @change="handleFileUpload('idCardFront', $event)"
                 />
               </div>
 
-              <v-img v-if="documentsPreview" :src="documentsPreview" alt="Documents" class="rounded-lg mt-6" />
+              <!-- Back Page -->
+              <div 
+                class="border-4 border-dashed border-purple-300 rounded-lg p-8 text-center cursor-pointer hover:border-purple-500 transition-colors"
+                @click="triggerFileInput('idCardBack')"
+              >
+                <v-icon v-if="!idCardBackPreview" class="mb-2" color="purple" size="48">
+                  mdi-plus
+                </v-icon>
+                <p class="text-sm font-semibold text-gray-700">Add the back page</p>
+                <input
+                  ref="idCardBackInput"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  @change="handleFileUpload('idCardBack', $event)"
+                />
+              </div>
             </div>
 
-            <AppAlert v-if="error" type="error" class="mt-4">
-              {{ error }}
-            </AppAlert>
+            <!-- Image Previews -->
+            <div v-if="idCardFrontPreview || idCardBackPreview" class="grid grid-cols-2 gap-6 mb-6">
+              <v-img v-if="idCardFrontPreview" :src="idCardFrontPreview" alt="ID Front" class="rounded-lg" />
+              <v-img v-if="idCardBackPreview" :src="idCardBackPreview" alt="ID Back" class="rounded-lg" />
+            </div>
           </div>
 
-          <!-- Action Buttons -->
+          <div>
+            <p class="font-semibold mb-4">Start your video chat to verify your identity</p>
+            <div 
+              class="border-4 border-dashed border-purple-300 rounded-lg p-12 text-center cursor-pointer hover:border-purple-500 transition-colors"
+            >
+              <v-icon class="mb-2" color="purple" size="48">
+                mdi-camera
+              </v-icon>
+              <p class="text-sm font-semibold text-gray-700">Turn on your camera</p>
+            </div>
+          </div>
+
+          <AppAlert v-if="error" type="error" class="mt-4">
+            {{ error }}
+          </AppAlert>
+
           <div class="flex gap-4 justify-between mt-12">
             <AppButton 
-              v-if="currentStep > 0"
               @click="currentStep--"
               variant="outlined"
               color="primary"
@@ -257,24 +239,65 @@
               Back
             </AppButton>
 
-            <div class="flex gap-4 ml-auto">
-              <AppButton 
-                v-if="currentStep < 2"
-                @click="nextStep"
-                color="primary"
-              >
-                Next
-              </AppButton>
+            <AppButton 
+              @click="nextStep"
+              color="primary"
+            >
+              Next
+            </AppButton>
+          </div>
+        </div>
 
-              <AppButton 
-                v-if="currentStep === 2"
-                @click="submit"
-                color="primary"
-                :loading="isLoading"
-              >
-                Sign Up
-              </AppButton>
+        <!-- Step 3: Documents -->
+        <div v-if="currentStep === 2" class="space-y-6">
+          <header class="mb-12">
+            <span class="text-sm font-bold uppercase tracking-widest text-blue-600 mb-2 block">3rd Step</span>
+            <h2 class="text-4xl font-bold tracking-tight text-gray-900">Documents of your title</h2>
+          </header>
+
+          <div>
+            <p class="font-semibold mb-4">Photo of your Documents</p>
+            
+            <div 
+              class="border-4 border-dashed border-purple-300 rounded-lg p-12 text-center cursor-pointer hover:border-purple-500 transition-colors"
+              @click="triggerFileInput('documents')"
+            >
+              <v-icon v-if="!documentsPreview" class="mb-2" color="purple" size="48">
+                mdi-plus
+              </v-icon>
+              <p class="text-sm font-semibold text-gray-700">Document</p>
+              <input
+                ref="documentsInput"
+                type="file"
+                accept="image/*"
+                hidden
+                @change="handleFileUpload('documents', $event)"
+              />
             </div>
+
+            <v-img v-if="documentsPreview" :src="documentsPreview" alt="Documents" class="rounded-lg mt-6" />
+          </div>
+
+          <AppAlert v-if="error" type="error" class="mt-4">
+            {{ error }}
+          </AppAlert>
+
+          <div class="flex gap-4 justify-between mt-12">
+            <AppButton 
+              @click="currentStep--"
+              variant="outlined"
+              color="primary"
+            >
+              Back
+            </AppButton>
+
+            <AppButton 
+              @click="submit"
+              color="primary"
+              :loading="isLoading"
+            >
+              Sign Up
+            </AppButton>
           </div>
         </div>
       </div>
@@ -424,3 +447,24 @@ const goHome = () => {
   router.push('/')
 }
 </script>
+
+<style scoped>
+.register-right-panel {
+  background-color: #faf8f6;
+  background-image: 
+    linear-gradient(45deg, #f5e6e0 25%, transparent 25%),
+    linear-gradient(-45deg, #f5e6e0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f5e6e0 75%),
+    linear-gradient(-45deg, transparent 75%, #f5e6e0 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+}
+
+.form-field-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3a3a3a;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+</style>

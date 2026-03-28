@@ -3,7 +3,7 @@
     <div class="w-full max-w-7xl mx-auto flex items-center gap-8">
       <!-- Logo -->
       <NuxtLink to="/" class="no-underline">
-        <img src="/logo.svg" alt="ESG Logo" class="h-8" />
+        <img src="/logo.svg" alt="ESG Logo" class="h-10 w-auto"/>
       </NuxtLink>
 
       <!-- Spacer -->
