@@ -1,0 +1,14 @@
+# Node
+node_modules/
+frontend/.nuxt/
+frontend/.output/
+# PHP / Composer / Laravel
+/vendor/
+/.env
+/storage/*.key
+/storage/*.sqlite
+/public/hot
+/public/storage
+./vscode/
+.github/
+/.vscode
