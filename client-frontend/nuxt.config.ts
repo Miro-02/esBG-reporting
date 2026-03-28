@@ -1,28 +1,34 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", "vuetify-nuxt-module"],
   ssr: true,
   
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:89'
+      apiBaseUrl: process.env.NGROK_URL || process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
     },
+  },
+  
+  vuetify: {
+    moduleOptions: {
+      styles: true,
+      autoImport: true,
+    }
   },
   
   vite: {
     server: {
+      middlewareMode: true,
       hmr: {
         protocol: 'ws',
-        host: 'night-duty-helper.localhost',
-        port: 89,
-        clientPort: 89
+        host: 'localhost',
+        port: 3000
       }
     }
   },
   
   css: [
-    "vuetify/styles",
     "@mdi/font/css/materialdesignicons.css",
     "~/assets/css/tailwind.css",
   ],
