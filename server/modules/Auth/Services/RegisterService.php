@@ -4,7 +4,6 @@ namespace Modules\Auth\Services;
 
 use Modules\User\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
 
 class RegisterService
 {
@@ -15,9 +14,6 @@ class RegisterService
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-
-        // Send email verification notification
-        event(new Registered($user));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

@@ -6,6 +6,9 @@ import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
 
 export default defineNuxtPlugin((nuxtApp) => {
+  // Disable SSR for Vuetify due to focus trap composable using browser APIs
+  if (process.server) return
+  
   const vuetify = createVuetify({
     components,
     directives,
