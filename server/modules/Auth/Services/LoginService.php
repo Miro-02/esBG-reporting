@@ -14,12 +14,6 @@ class LoginService
 
         $user = Auth::user();
 
-        // Check if email is verified
-        if (!$user->hasVerifiedEmail()) {
-            Auth::logout();
-            return false;
-        }
-
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
