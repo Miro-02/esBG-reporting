@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'domain' => env('NGROK_URL') ? parse_url(env('NGROK_URL'), PHP_URL_HOST) : env('SESSION_DOMAIN'),
+    'domain' => env('SESSION_DOMAIN', 'esbg-reporting.localhost'),
 
     /*
     |--------------------------------------------------------------------------

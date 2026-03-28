@@ -15,14 +15,7 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        // Extract domain from NGROK_URL if set
-        env('NGROK_URL') ? ',' . parse_url(env('NGROK_URL'), PHP_URL_HOST) . ':443' : '',
-        // Also add ngrok host without port for browser requests
-        env('NGROK_URL') ? ',' . parse_url(env('NGROK_URL'), PHP_URL_HOST) : '',
-    ))),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,localhost:3000,127.0.0.1,127.0.0.1:89,::1,esbg-reporting.localhost,esbg-reporting.localhost:89')),
 
     /*
     |--------------------------------------------------------------------------

@@ -2,11 +2,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   modules: ["@pinia/nuxt", "vuetify-nuxt-module"],
-  ssr: true,
+  ssr: false,
   
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NGROK_URL || process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://esbg-reporting.localhost:89'
     },
   },
   

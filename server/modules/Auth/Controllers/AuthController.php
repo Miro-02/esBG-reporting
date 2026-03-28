@@ -38,6 +38,22 @@ class AuthController extends Controller
         return response()->json($result);
     }
 
+    public function me(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json([
+                'message' => 'Not authenticated'
+            ], 401);
+        }
+
+        return response()->json([
+            'user' => $user,
+            'authenticated' => true
+        ]);
+    }
+
     public function logout(Request $request, LogoutService $logoutService): JsonResponse
     {
         $logoutService->handle($request->user());

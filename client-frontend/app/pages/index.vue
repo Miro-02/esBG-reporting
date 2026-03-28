@@ -218,14 +218,13 @@ function nextSlide() {
   line-height: 1.1;
   letter-spacing: -0.02em;
   margin-bottom: 14px;
-  max-width: 520px;
 }
 
 .hero-sub {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25rem;
   color: rgba(255, 255, 255, 0.75);
-  max-width: 360px;
+  max-width: 560px;
   line-height: 1.65;
   margin-bottom: 28px;
 }
@@ -235,7 +234,7 @@ function nextSlide() {
   background: #fff;
   color: #11298a;
   font-family: 'Arial', sans-serif;
-  font-size: 0.8rem;
+  font-size: 20px;
   font-weight: 700;
   padding: 11px 22px;
   text-decoration: none;
@@ -250,7 +249,6 @@ function nextSlide() {
 
 /* ── Why Choose Us ────────────────────────────────── */
 .why-section {
-  background: #f0f0f5;
   padding: 60px 0 0;
   text-align: center;
 }
@@ -286,7 +284,7 @@ function nextSlide() {
 
 .why-photo {
   width: 100%;
-  height: 300px;
+  height: 400px;
   background: url('/pexels-kampus-8441790.png')
     center / cover no-repeat;
 }

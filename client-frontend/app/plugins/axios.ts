@@ -27,11 +27,16 @@ export default defineNuxtPlugin(() => {
   // ========================================
   api.interceptors.request.use(
     (config) => {
-      // Add auth token if exists
-      // const token = useCookie('auth_token')
-      // if (token.value) {
-      //   config.headers.Authorization = `Bearer ${token.value}`
-      // }
+      // Add auth token from localStorage if it exists
+      try {
+        const token = localStorage.getItem('auth_token')
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+      } catch (error) {
+        // localStorage might not be available in SSR context
+        console.debug('Could not read auth token from localStorage:', error)
+      }
 
       return config
     },

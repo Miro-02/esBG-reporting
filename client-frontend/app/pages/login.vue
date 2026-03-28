@@ -94,8 +94,8 @@ import type {
 import { useAuthStore } from "~/stores/auth";
 
 definePageMeta({
-  ssr: false,
-});
+  layout: 'auth'
+})
 
 const router = useRouter();
 const email = ref("");
@@ -117,11 +117,11 @@ const submit = async () => {
   };
   try {
     const res = await authStore.login(loginRequest);
-    localStorage.setItem("token", res.access_token);
     router.push("/");
   } catch (err: any) {
     const apiError = err.response?.data as ApiError;
     error.value = apiError?.message || "Error";
+    console.log("Login error:", err);
   }
 };
 
