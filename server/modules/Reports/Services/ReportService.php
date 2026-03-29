@@ -101,6 +101,6 @@ class ReportService
      */
     public function loadAllRelations(Report $report): Report
     {
-        return $report->load('section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'frameworks', 'certifications');
+        return $report->load('user', 'section1.legalForm', 'section1.country.standard', 'section1.sector', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'frameworks', 'certifications');
     }
 }

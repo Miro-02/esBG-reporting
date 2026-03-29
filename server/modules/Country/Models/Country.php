@@ -15,4 +15,12 @@ class Country extends Model
         'name',
         'code',
     ];
+
+    /**
+     * Get the standards for this country.
+     */
+    public function standard()
+    {
+        return $this->hasOne(CountryStandard::class);
+    }
 }

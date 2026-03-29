@@ -111,4 +111,28 @@ class Report extends Model
     {
         return $this->belongsToMany(\Modules\Framework\Models\Certification::class, 'report_certifications');
     }
+
+    /**
+     * Get all fields that violate country standards for this report.
+     *
+     * @return array List of field names that violate standards
+     */
+    public function getViolatingFields(): array
+    {
+        $complianceCheckService = new \App\Services\ComplianceCheckService();
+        return $complianceCheckService->getViolatingFields($this);
+    }
+
+    /**
+     * Check if a specific field violates country standard.
+     *
+     * @param string $fieldName
+     * @param mixed $reportValue
+     * @return bool True if violates standard
+     */
+    public function isFieldViolating(string $fieldName, $reportValue): bool
+    {
+        $complianceCheckService = new \App\Services\ComplianceCheckService();
+        return $complianceCheckService->isFieldViolating($fieldName, $reportValue, $this);
+    }
 }

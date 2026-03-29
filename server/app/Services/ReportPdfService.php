@@ -21,7 +21,7 @@ class ReportPdfService
         $report->load(
             'user',
             'section1.legalForm',
-            'section1.country',
+            'section1.country.standard',
             'section1.sector',
             'section2',
             'section3',

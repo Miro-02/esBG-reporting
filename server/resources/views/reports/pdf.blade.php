@@ -383,6 +383,18 @@
             font-style: italic;
         }
 
+        .field-value.violation {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left-color: var(--accent-red);
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .violation-indicator {
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
         /* Lists */
         ul, ol {
             margin-left: 25px;
@@ -508,7 +520,7 @@
             <div class="kpi-card status-warning">
                 <div class="kpi-label">Total GHG Emissions (Scope 1+2)</div>
                 <div class="kpi-value">{{ ($report->section3->ghg_emissions_scope1 ?? 0) + ($report->section3->ghg_emissions_scope2 ?? 0) }}</div>
-                <div style="font-size: 10pt; color: var(--text-light); margin-top: 5px;">tonnes CO₂e</div>
+                <div style="font-size: 10pt; color: var(--text-light); margin-top: 5px;">tonnes CO2e</div>
             </div>
             @endif
 
@@ -539,6 +551,15 @@
     </div>
 
     <div class="content">
+        <?php
+        // Get list of fields that violate country standards
+        $violatingFields = $report->getViolatingFields();
+        
+        // Helper function to check if a field has a violation
+        $hasViolation = function($fieldName) use ($violatingFields) {
+            return in_array($fieldName, $violatingFields);
+        };
+        ?>
         <!-- Section 1: Company Profile -->
         @if($report->section1)
         <div class="section">
@@ -625,6 +646,61 @@
                 <div class="field-label">Stakeholder Engagement</div>
                 <div class="field-value">{!! nl2br(e($report->section2->stakeholder_engagement ?? 'N/A')) !!}</div>
             </div>
+
+            <!-- Compliance Metrics -->
+            @if($report->section2->female_board_percentage !== null)
+            <div class="field">
+                <div class="field-label">Female Board Percentage</div>
+                <div class="field-value @if($hasViolation('female_board_percentage')) violation @endif">
+                    {{ $report->section2->female_board_percentage }}% @if($hasViolation('female_board_percentage')) <span class="violation-indicator">Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section2->code_of_conduct_exists !== null)
+            <div class="field">
+                <div class="field-label">Code of Conduct Exists</div>
+                <div class="field-value @if($hasViolation('code_of_conduct_exists')) violation @endif">
+                    {{ $report->section2->code_of_conduct_exists ? 'Yes' : 'No' }} @if($hasViolation('code_of_conduct_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section2->esg_committee_exists !== null)
+            <div class="field">
+                <div class="field-label">ESG Committee Exists</div>
+                <div class="field-value @if($hasViolation('esg_committee_exists')) violation @endif">
+                    {{ $report->section2->esg_committee_exists ? 'Yes' : 'No' }} @if($hasViolation('esg_committee_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section2->whistleblower_channel_exists !== null)
+            <div class="field">
+                <div class="field-label">Whistleblower Channel Exists</div>
+                <div class="field-value @if($hasViolation('whistleblower_channel_exists')) violation @endif">
+                    {{ $report->section2->whistleblower_channel_exists ? 'Yes' : 'No' }} @if($hasViolation('whistleblower_channel_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section2->anti_corruption_training_rate !== null)
+            <div class="field">
+                <div class="field-label">Anti-Corruption Training Rate</div>
+                <div class="field-value @if($hasViolation('anti_corruption_training_rate')) violation @endif">
+                    {{ $report->section2->anti_corruption_training_rate }}% @if($hasViolation('anti_corruption_training_rate')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section2->esg_awareness_training_rate !== null)
+            <div class="field">
+                <div class="field-label">ESG Awareness Training Rate</div>
+                <div class="field-value @if($hasViolation('esg_awareness_training_rate')) violation @endif">
+                    {{ $report->section2->esg_awareness_training_rate }}% @if($hasViolation('esg_awareness_training_rate')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
         </div>
         @endif
 
@@ -667,15 +743,7 @@
                 <div class="field-label">Renewable Energy Usage (%)</div>
                 <div class="field-value">
                     {{ $report->section3->renewable_energy_usage ?? 'N/A' }}%
-                    <span class="status-badge @if($report->section3->renewable_energy_usage >= 50) success @elseif($report->section3->renewable_energy_usage >= 30) warning @else critical @endif">
-                        @if($report->section3->renewable_energy_usage >= 75)
-                            ✓ On Target
-                        @elseif($report->section3->renewable_energy_usage >= 50)
-                            △ Monitor
-                        @else
-                            ✗ Below Target
-                        @endif
-                    </span>
+                    <span class="status-badge @if($report->section3->renewable_energy_usage >= 50) success @elseif($report->section3->renewable_energy_usage >= 30) warning @else critical @endif">@if($report->section3->renewable_energy_usage >= 75) ✓ On Target @elseif($report->section3->renewable_energy_usage >= 50) △ Monitor @else ✗ Below Target @endif</span>
                 </div>
             </div>
 
@@ -683,6 +751,43 @@
                 <div class="field-label">Climate Risk Assessment</div>
                 <div class="field-value">{!! nl2br(e($report->section3->climate_risk_assessment ?? 'N/A')) !!}</div>
             </div>
+
+            <!-- Compliance Metrics -->
+            @if($report->section3->renewable_energy_percentage !== null)
+            <div class="field">
+                <div class="field-label">Renewable Energy Percentage</div>
+                <div class="field-value @if($hasViolation('renewable_energy_percentage')) violation @endif">
+                    {{ $report->section3->renewable_energy_percentage }}% @if($hasViolation('renewable_energy_percentage')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section3->grid_electricity_percentage !== null)
+            <div class="field">
+                <div class="field-label">Grid Electricity Percentage</div>
+                <div class="field-value @if($hasViolation('grid_electricity_percentage')) violation @endif">
+                    {{ $report->section3->grid_electricity_percentage }}% @if($hasViolation('grid_electricity_percentage')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section3->total_energy_consumed !== null)
+            <div class="field">
+                <div class="field-label">Total Energy Consumed</div>
+                <div class="field-value @if($hasViolation('total_energy_consumed')) violation @endif">
+                    {{ $report->section3->total_energy_consumed }} @if($hasViolation('total_energy_consumed')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section3->ghg_intensity_value !== null)
+            <div class="field">
+                <div class="field-label">GHG Intensity Value</div>
+                <div class="field-value @if($hasViolation('ghg_intensity_value')) violation @endif">
+                    {{ $report->section3->ghg_intensity_value }} @if($hasViolation('ghg_intensity_value')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
         </div>
         @endif
 
@@ -700,15 +805,7 @@
                 <div class="field-label">Gender Diversity (%)</div>
                 <div class="field-value">
                     {{ $report->section4->gender_diversity ?? 'N/A' }}%
-                    <span class="status-badge @if($report->section4->gender_diversity >= 40) success @elseif($report->section4->gender_diversity >= 30) warning @else critical @endif">
-                        @if($report->section4->gender_diversity >= 40)
-                            ✓ On Target
-                        @elseif($report->section4->gender_diversity >= 30)
-                            △ Monitor
-                        @else
-                            ✗ Below Target
-                        @endif
-                    </span>
+                    <span class="status-badge @if($report->section4->gender_diversity >= 40) success @elseif($report->section4->gender_diversity >= 30) warning @else critical @endif">@if($report->section4->gender_diversity >= 40) ✓ On Target @elseif($report->section4->gender_diversity >= 30) △ Monitor @else ✗ Below Target @endif</span>
                 </div>
             </div>
 
@@ -736,6 +833,61 @@
                 <div class="field-label">Employee Turnover Rate (%)</div>
                 <div class="field-value">{{ $report->section4->employee_turnover_rate ?? 'N/A' }}%</div>
             </div>
+
+            <!-- Compliance Metrics -->
+            @if($report->section4->female_percentage !== null)
+            <div class="field">
+                <div class="field-label">Female Workforce Percentage</div>
+                <div class="field-value @if($hasViolation('female_percentage')) violation @endif">
+                    {{ $report->section4->female_percentage }}% @if($hasViolation('female_percentage')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section4->female_leadership_percentage !== null)
+            <div class="field">
+                <div class="field-label">Female Leadership Percentage</div>
+                <div class="field-value @if($hasViolation('female_leadership_percentage')) violation @endif">
+                    {{ $report->section4->female_leadership_percentage }}% @if($hasViolation('female_leadership_percentage')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section4->employees_in_training_percentage !== null)
+            <div class="field">
+                <div class="field-label">Employees in Training Percentage</div>
+                <div class="field-value @if($hasViolation('employees_in_training_percentage')) violation @endif">
+                    {{ $report->section4->employees_in_training_percentage }}% @if($hasViolation('employees_in_training_percentage')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section4->employee_assistance_program_exists !== null)
+            <div class="field">
+                <div class="field-label">Employee Assistance Program Exists</div>
+                <div class="field-value @if($hasViolation('employee_assistance_program_exists')) violation @endif">
+                    {{ $report->section4->employee_assistance_program_exists ? 'Yes' : 'No' }} @if($hasViolation('employee_assistance_program_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section4->sickness_rate !== null)
+            <div class="field">
+                <div class="field-label">Sickness Rate (%)</div>
+                <div class="field-value @if($hasViolation('sickness_rate')) violation @endif">
+                    {{ $report->section4->sickness_rate }}% @if($hasViolation('sickness_rate')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section4->survey_participation_rate !== null)
+            <div class="field">
+                <div class="field-label">Survey Participation Rate</div>
+                <div class="field-value @if($hasViolation('survey_participation_rate')) violation @endif">
+                    {{ $report->section4->survey_participation_rate }}% @if($hasViolation('survey_participation_rate')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
         </div>
         @endif
 
@@ -743,6 +895,70 @@
         @if($report->section5)
         <div class="section">
             <h2>Section 5: Cybersecurity</h2>
+
+            <!-- Required Compliance Fields -->
+            @if($report->section5->cybersecurity_framework_exists !== null)
+            <div class="field">
+                <div class="field-label">Cybersecurity Framework Exists</div>
+                <div class="field-value @if($hasViolation('cybersecurity_framework_exists')) violation @endif">
+                    {{ $report->section5->cybersecurity_framework_exists ? 'Yes' : 'No' }} @if($hasViolation('cybersecurity_framework_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->cybersecurity_training_rate !== null)
+            <div class="field">
+                <div class="field-label">Security Training Rate (%)</div>
+                <div class="field-value @if($hasViolation('cybersecurity_training_rate')) violation @endif">
+                    {{ $report->section5->cybersecurity_training_rate }}% @if($hasViolation('cybersecurity_training_rate')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->data_breach_incidents !== null)
+            <div class="field">
+                <div class="field-label">Data Breaches (Last Year)</div>
+                <div class="field-value @if($hasViolation('data_breach_incidents')) violation @endif">
+                    {{ $report->section5->data_breach_incidents }} @if($hasViolation('data_breach_incidents')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->gdpr_compliant !== null)
+            <div class="field">
+                <div class="field-label">GDPR Compliant</div>
+                <div class="field-value @if($hasViolation('gdpr_compliant')) violation @endif">
+                    {{ $report->section5->gdpr_compliant ? 'Yes' : 'No' }} @if($hasViolation('gdpr_compliant')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->iso27001_certified !== null)
+            <div class="field">
+                <div class="field-label">ISO 27001 Certified</div>
+                <div class="field-value @if($hasViolation('iso27001_certified')) violation @endif">
+                    {{ $report->section5->iso27001_certified ? 'Yes' : 'No' }} @if($hasViolation('iso27001_certified')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->security_audit_frequency !== null)
+            <div class="field">
+                <div class="field-label">Security Audit Frequency</div>
+                <div class="field-value @if($hasViolation('security_audit_frequency')) violation @endif">
+                    {{ $report->section5->security_audit_frequency }} @if($hasViolation('security_audit_frequency')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->incident_response_plan_exists !== null)
+            <div class="field">
+                <div class="field-label">Incident Response Plan Exists</div>
+                <div class="field-value @if($hasViolation('incident_response_plan_exists')) violation @endif">
+                    {{ $report->section5->incident_response_plan_exists ? 'Yes' : 'No' }} @if($hasViolation('incident_response_plan_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
 
             <div class="field">
                 <div class="field-label">Cybersecurity Policy</div>
@@ -755,38 +971,6 @@
             </div>
 
             <div class="field">
-                <div class="field-label">Security Incidents Reported</div>
-                <div class="field-value">
-                    {{ $report->section5->security_incidents_reported ?? 'N/A' }}
-                    <span class="status-badge @if(($report->section5->security_incidents_reported ?? 0) == 0) success @elseif(($report->section5->security_incidents_reported ?? 0) < 3) warning @else critical @endif">
-                        @if(($report->section5->security_incidents_reported ?? 0) == 0)
-                            ✓ Secure
-                        @elseif(($report->section5->security_incidents_reported ?? 0) < 3)
-                            △ Monitor
-                        @else
-                            ✗ Review Needed
-                        @endif
-                    </span>
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="field-label">Security Training Completion (%)</div>
-                <div class="field-value">
-                    {{ $report->section5->security_training_completion ?? 'N/A' }}%
-                    <span class="status-badge @if($report->section5->security_training_completion >= 85) success @elseif($report->section5->security_training_completion >= 70) warning @else critical @endif">
-                        @if($report->section5->security_training_completion >= 85)
-                            ✓ Excellent
-                        @elseif($report->section5->security_training_completion >= 70)
-                            △ Improving
-                        @else
-                            ✗ Action Needed
-                        @endif
-                    </span>
-                </div>
-            </div>
-
-            <div class="field">
                 <div class="field-label">Data Breach Response Plan</div>
                 <div class="field-value">{!! nl2br(e($report->section5->data_breach_response_plan ?? 'N/A')) !!}</div>
             </div>
@@ -795,6 +979,34 @@
                 <div class="field-label">Compliance with Standards</div>
                 <div class="field-value">{!! nl2br(e($report->section5->compliance_with_standards ?? 'N/A')) !!}</div>
             </div>
+
+            <!-- Additional Compliance Metrics -->
+            @if($report->section5->cybersecurity_training_completion_rate !== null)
+            <div class="field">
+                <div class="field-label">Cybersecurity Training Completion Rate</div>
+                <div class="field-value @if($hasViolation('cybersecurity_training_completion_rate')) violation @endif">
+                    {{ $report->section5->cybersecurity_training_completion_rate }}% @if($hasViolation('cybersecurity_training_completion_rate')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->number_of_breaches !== null)
+            <div class="field">
+                <div class="field-label">Number of Breaches</div>
+                <div class="field-value @if($hasViolation('number_of_breaches')) violation @endif">
+                    {{ $report->section5->number_of_breaches }} @if($hasViolation('number_of_breaches')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section5->customers_affected_by_breaches !== null)
+            <div class="field">
+                <div class="field-label">Customers Affected by Breaches</div>
+                <div class="field-value @if($hasViolation('customers_affected_by_breaches')) violation @endif">
+                    {{ $report->section5->customers_affected_by_breaches }} @if($hasViolation('customers_affected_by_breaches')) <span class="violation-indicator"> Above Standard</span> @endif
+                </div>
+            </div>
+            @endif
         </div>
         @endif
 
@@ -832,6 +1044,43 @@
                 <div class="field-label">Social Compliance Certification</div>
                 <div class="field-value">{!! nl2br(e($report->section6->social_compliance_certification ?? 'N/A')) !!}</div>
             </div>
+
+            <!-- Compliance Metrics -->
+            @if($report->section6->supplier_code_exists !== null)
+            <div class="field">
+                <div class="field-label">Supplier Code Exists</div>
+                <div class="field-value @if($hasViolation('supplier_code_exists')) violation @endif">
+                    {{ $report->section6->supplier_code_exists ? 'Yes' : 'No' }} @if($hasViolation('supplier_code_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section6->suppliers_acknowledged_code_percentage !== null)
+            <div class="field">
+                <div class="field-label">Suppliers Acknowledged Code Percentage</div>
+                <div class="field-value @if($hasViolation('suppliers_acknowledged_code_percentage')) violation @endif">
+                    {{ $report->section6->suppliers_acknowledged_code_percentage }}% @if($hasViolation('suppliers_acknowledged_code_percentage')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section6->procurement_staff_trained_percentage !== null)
+            <div class="field">
+                <div class="field-label">Procurement Staff Trained Percentage</div>
+                <div class="field-value @if($hasViolation('procurement_staff_trained_percentage')) violation @endif">
+                    {{ $report->section6->procurement_staff_trained_percentage }}% @if($hasViolation('procurement_staff_trained_percentage')) <span class="violation-indicator"> Below Standard</span> @endif
+                </div>
+            </div>
+            @endif
+
+            @if($report->section6->third_party_risk_management_exists !== null)
+            <div class="field">
+                <div class="field-label">Third Party Risk Management Exists</div>
+                <div class="field-value @if($hasViolation('third_party_risk_management_exists')) violation @endif">
+                    {{ $report->section6->third_party_risk_management_exists ? 'Yes' : 'No' }} @if($hasViolation('third_party_risk_management_exists')) <span class="violation-indicator"> Required</span> @endif
+                </div>
+            </div>
+            @endif
         </div>
         @endif
 
