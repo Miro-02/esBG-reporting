@@ -61,7 +61,7 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const formStore = useReportFormStore()
-const { createReport, getReport, updateSection, updateFrameworks, updateCertifications } = useReportApi()
+const { createReport, getReport, updateMetadata, updateSection, updateFrameworks, updateCertifications } = useReportApi()
 
 const isLoading = ref(false)
 const isSaving = ref(false)
@@ -135,10 +135,12 @@ const handleNextStep = async () => {
         // First time: create the report
         const report = await createReport(formStore.formData.metadata)
         formStore.setReportId(report.id)
+        // Update URL with reportId so data persists on page reload
+        router.replace({ query: { reportId: report.id } })
       }
       else {
-        // Update metadata
-        await updateSection(formStore.reportId, 0, formStore.formData.metadata)
+        // Update metadata - use correct endpoint
+        await updateMetadata(formStore.reportId, formStore.formData.metadata)
       }
     }
     // Steps 2-8: Update sections

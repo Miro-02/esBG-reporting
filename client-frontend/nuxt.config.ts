@@ -4,6 +4,14 @@ export default defineNuxtConfig({
   modules: ["@pinia/nuxt", "vuetify-nuxt-module"],
   ssr: false,
   
+  app: {
+    head: {
+      link: [
+        { rel: "icon", type: "image/svg+xml", href: "/logo.svg" }
+      ]
+    }
+  },
+  
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://esbg-reporting.localhost:89'
