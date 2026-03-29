@@ -68,18 +68,18 @@
 const missionItems = [
   {
     icon: '◎',
-    title: 'Transparent',
-    text: 'esBG Reporting gives companies a comprehensive platform to track, manage, and disclose their ESG metrics with full traceability and auditability.',
+    title: 'Our Mission',
+    text: 'We help small and medium-sized business owners go through their annual ESG reporting easily and with confidence. Our goal is to simplify complex sustainability requirements and make compliance clear and manageable.',
   },
   {
     icon: '◈',
-    title: 'Accessible',
-    text: 'We remove the barriers to ESG compliance — making structured reporting simple and approachable for businesses of all sizes and sectors.',
+    title: 'Boost Your ESG Performance',
+    text: 'We help businesses elevate their operations to the next level by improving their ESG score in a simple and effective way. With the right tools and guidance, sustainability becomes an advantage, not a burden.',
   },
   {
     icon: '◆',
-    title: 'Actionable',
-    text: 'Our tools transform raw ESG data into strategic insight, helping organizations act on their commitments rather than just report them.',
+    title: 'Smart & Simple Solutions',
+    text: 'Our platform provides clear insights, practical tools, and step-by-step guidance for ESG reporting. This allows companies to focus on growth while staying aligned with modern sustainability standards.',
   },
 ]
 

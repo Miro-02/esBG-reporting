@@ -116,6 +116,16 @@
             </li>
             
             <li>
+              <NuxtLink 
+                to="/profile" 
+                class="nav-link"
+                :aria-current="$route.path === '/profile' ? 'page' : undefined"
+              >
+                My Profile
+              </NuxtLink>
+            </li>
+            
+            <li>
               <AppButton
                 type="button"
                 variant="flat"
@@ -228,6 +238,17 @@
               :aria-current="$route.path === '/reports/create' ? 'page' : undefined"
             >
               Create a report
+            </NuxtLink>
+          </li>
+          
+          <li>
+            <NuxtLink 
+              to="/profile" 
+              class="mobile-nav-link"
+              @click="isMobileMenuOpen = false"
+              :aria-current="$route.path === '/profile' ? 'page' : undefined"
+            >
+              My Profile
             </NuxtLink>
           </li>
           

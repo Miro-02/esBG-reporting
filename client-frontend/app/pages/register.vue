@@ -58,19 +58,19 @@
             <p class="step-subtitle">Step 1 of 3</p>
           </header>
 
-          <!-- Company Name -->
+          <!-- User Name -->
           <div class="form-group">
-            <label for="company-name" class="form-label required">Company Name</label>
+            <label for="user-name" class="form-label required">User Name</label>
             <input
-              id="company-name"
+              id="user-name"
               v-model="name"
               type="text"
-              autocomplete="organization"
+              autocomplete="name"
               required
               aria-required="true"
               aria-describedby="name-error"
               :aria-invalid="nameError ? 'true' : 'false'"
-              placeholder="Enter your company name"
+              placeholder="Enter your name"
               class="form-input"
             />
             <div v-if="nameError" id="name-error" role="alert" class="form-error">
@@ -516,7 +516,7 @@ const nextStep = () => {
     let isValid = true
 
     if (!name.value.trim()) {
-      nameError.value = "Company name is required"
+      nameError.value = "User name is required"
       isValid = false
     }
 

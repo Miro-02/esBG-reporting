@@ -40,7 +40,6 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (payload: RegisterRequest): Promise<RegisterResponse> => {
     const $api = getApi()
     const res = await $api.post<RegisterResponse>('/api/auth/register', payload)
-    isLoggedIn.value = true
     return res.data
   }
 
