@@ -165,6 +165,8 @@ function prevSlide() {
 function nextSlide() {
   activeSlide.value = (activeSlide.value + 1) % testimonials.length
 }
+
+
 </script>
 
 <style scoped>
@@ -419,6 +421,8 @@ function nextSlide() {
 .dot.active {
   background: #11298a;
 }
+
+
 
 /* ── Contact ──────────────────────────────────────── */
 .contact-section {

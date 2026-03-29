@@ -11,11 +11,33 @@ use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Modules\Reports\Models\Report;
 use Modules\Reports\Requests\StoreReportRequest;
-use Modules\Reports\Requests\UpdateReportRequest;
+use Modules\Reports\Requests\UpdateReportMetadataRequest;
+use Modules\Reports\Requests\StoreReportSection1Request;
+use Modules\Reports\Requests\StoreReportSection2Request;
+use Modules\Reports\Requests\StoreReportSection3Request;
+use Modules\Reports\Requests\StoreReportSection4Request;
+use Modules\Reports\Requests\StoreReportSection5Request;
+use Modules\Reports\Requests\StoreReportSection6Request;
+use Modules\Reports\Requests\StoreReportSection7Request;
+use Modules\Reports\Requests\UpdateReportSection1Request;
+use Modules\Reports\Requests\UpdateReportSection2Request;
+use Modules\Reports\Requests\UpdateReportSection3Request;
+use Modules\Reports\Requests\UpdateReportSection4Request;
+use Modules\Reports\Requests\UpdateReportSection5Request;
+use Modules\Reports\Requests\UpdateReportSection6Request;
+use Modules\Reports\Requests\UpdateReportSection7Request;
 use Modules\Reports\Resources\ReportResource;
+use Modules\Reports\Services\ReportService;
 
 class ReportController extends Controller
 {
+    private ReportService $reportService;
+
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
     /**
      * Get all reports for the authenticated user
      */
@@ -29,67 +51,20 @@ class ReportController extends Controller
     }
 
     /**
-     * Create a new report with all sections
+     * Create a new report with metadata only
      */
     public function store(StoreReportRequest $request): JsonResponse
     {
         try {
             $validatedData = $request->validated();
-            
-            // Create report with metadata
-            $report = Report::create([
+
+            $report = $this->reportService->createReport([
                 'user_id' => $request->user()->id,
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'] ?? null,
                 'start_date' => $validatedData['start_date'] ?? null,
                 'end_date' => $validatedData['end_date'] ?? null,
             ]);
-
-            // Create Section 1: Company Profile
-            if (isset($validatedData['section1'])) {
-                $report->section1()->create($validatedData['section1']);
-            }
-
-            // Create Section 2: Governance
-            if (isset($validatedData['section2'])) {
-                $report->section2()->create($validatedData['section2']);
-            }
-
-            // Create Section 3: Environment
-            if (isset($validatedData['section3'])) {
-                $report->section3()->create($validatedData['section3']);
-            }
-
-            // Create Section 4: Social
-            if (isset($validatedData['section4'])) {
-                $report->section4()->create($validatedData['section4']);
-            }
-
-            // Create Section 5: Cybersecurity
-            if (isset($validatedData['section5'])) {
-                $report->section5()->create($validatedData['section5']);
-            }
-
-            // Create Section 6: Supply Chain
-            if (isset($validatedData['section6'])) {
-                $report->section6()->create($validatedData['section6']);
-            }
-
-            // Create Section 7: Targets
-            if (isset($validatedData['section7'])) {
-                $report->section7()->create($validatedData['section7']);
-            }
-
-            // Attach frameworks and certifications
-            if (isset($validatedData['frameworks'])) {
-                $report->frameworks()->sync($validatedData['frameworks']);
-            }
-
-            if (isset($validatedData['certifications'])) {
-                $report->certifications()->sync($validatedData['certifications']);
-            }
-
-            $report->load('section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'frameworks', 'certifications');
 
             return response()->json([
                 'message' => 'Report created successfully',
@@ -115,7 +90,7 @@ class ReportController extends Controller
             ], 403);
         }
 
-        $report->load('section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'frameworks', 'certifications');
+        $report = $this->reportService->loadAllRelations($report);
 
         return response()->json([
             'data' => new ReportResource($report),
@@ -123,9 +98,9 @@ class ReportController extends Controller
     }
 
     /**
-     * Update a report with all sections
+     * Update report metadata
      */
-    public function update(UpdateReportRequest $request, Report $report): JsonResponse
+    public function updateMetadata(UpdateReportMetadataRequest $request, Report $report): JsonResponse
     {
         try {
             // Check if user owns this report
@@ -137,88 +112,176 @@ class ReportController extends Controller
 
             $validatedData = $request->validated();
 
-            // Update report metadata
-            $report->update([
-                'name' => $validatedData['name'],
-                'description' => $validatedData['description'] ?? null,
-                'start_date' => $validatedData['start_date'] ?? null,
-                'end_date' => $validatedData['end_date'] ?? null,
-            ]);
+            $this->reportService->updateReportMetadata($report, $validatedData);
 
-            // Update or create Section 1
-            if (isset($validatedData['section1'])) {
-                $report->section1()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section1']
-                );
-            }
-
-            // Update or create Section 2
-            if (isset($validatedData['section2'])) {
-                $report->section2()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section2']
-                );
-            }
-
-            // Update or create Section 3
-            if (isset($validatedData['section3'])) {
-                $report->section3()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section3']
-                );
-            }
-
-            // Update or create Section 4
-            if (isset($validatedData['section4'])) {
-                $report->section4()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section4']
-                );
-            }
-
-            // Update or create Section 5
-            if (isset($validatedData['section5'])) {
-                $report->section5()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section5']
-                );
-            }
-
-            // Update or create Section 6
-            if (isset($validatedData['section6'])) {
-                $report->section6()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section6']
-                );
-            }
-
-            // Update or create Section 7
-            if (isset($validatedData['section7'])) {
-                $report->section7()->updateOrCreate(
-                    ['report_id' => $report->id],
-                    $validatedData['section7']
-                );
-            }
-
-            // Sync frameworks and certifications
-            if (isset($validatedData['frameworks'])) {
-                $report->frameworks()->sync($validatedData['frameworks']);
-            }
-
-            if (isset($validatedData['certifications'])) {
-                $report->certifications()->sync($validatedData['certifications']);
-            }
-
-            $report->load('section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7', 'frameworks', 'certifications');
+            $report = $this->reportService->loadAllRelations($report);
 
             return response()->json([
-                'message' => 'Report updated successfully',
+                'message' => 'Report metadata updated successfully',
                 'data' => new ReportResource($report),
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to update report',
+                'message' => 'Failed to update report metadata',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Update Section 1: Company Profile
+     */
+    public function updateSection1(StoreReportSection1Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 1);
+    }
+
+    /**
+     * Update Section 2: Governance
+     */
+    public function updateSection2(StoreReportSection2Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 2);
+    }
+
+    /**
+     * Update Section 3: Environment
+     */
+    public function updateSection3(StoreReportSection3Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 3);
+    }
+
+    /**
+     * Update Section 4: Social
+     */
+    public function updateSection4(StoreReportSection4Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 4);
+    }
+
+    /**
+     * Update Section 5: Cybersecurity
+     */
+    public function updateSection5(StoreReportSection5Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 5);
+    }
+
+    /**
+     * Update Section 6: Supply Chain
+     */
+    public function updateSection6(StoreReportSection6Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 6);
+    }
+
+    /**
+     * Update Section 7: Targets
+     */
+    public function updateSection7(StoreReportSection7Request $request, Report $report): JsonResponse
+    {
+        return $this->updateSection($request, $report, 7);
+    }
+
+    /**
+     * Helper method to update a section
+     */
+    private function updateSection(Request $request, Report $report, int $sectionNumber): JsonResponse
+    {
+        try {
+            // Check if user owns this report
+            if ($report->user_id !== $request->user()->id) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            $validatedData = $request->validated();
+
+            $this->reportService->updateSection($report, $sectionNumber, $validatedData);
+
+            $report = $this->reportService->loadAllRelations($report);
+
+            return response()->json([
+                'message' => "Report section {$sectionNumber} updated successfully",
+                'data' => new ReportResource($report),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => "Failed to update section {$sectionNumber}",
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Update frameworks for a report
+     */
+    public function updateFrameworks(Request $request, Report $report): JsonResponse
+    {
+        try {
+            // Check if user owns this report
+            if ($report->user_id !== $request->user()->id) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            $validated = $request->validate([
+                'frameworks' => 'nullable|array',
+                'frameworks.*' => 'integer|exists:frameworks,id',
+            ]);
+
+            if (isset($validated['frameworks'])) {
+                $this->reportService->updateFrameworks($report, $validated['frameworks']);
+            }
+
+            $report = $this->reportService->loadAllRelations($report);
+
+            return response()->json([
+                'message' => 'Report frameworks updated successfully',
+                'data' => new ReportResource($report),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update frameworks',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Update certifications for a report
+     */
+    public function updateCertifications(Request $request, Report $report): JsonResponse
+    {
+        try {
+            // Check if user owns this report
+            if ($report->user_id !== $request->user()->id) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            $validated = $request->validate([
+                'certifications' => 'nullable|array',
+                'certifications.*' => 'integer|exists:certifications,id',
+            ]);
+
+            if (isset($validated['certifications'])) {
+                $this->reportService->updateCertifications($report, $validated['certifications']);
+            }
+
+            $report = $this->reportService->loadAllRelations($report);
+
+            return response()->json([
+                'message' => 'Report certifications updated successfully',
+                'data' => new ReportResource($report),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update certifications',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -237,7 +300,7 @@ class ReportController extends Controller
                 ], 403);
             }
 
-            $report->delete();
+            $this->reportService->deleteReport($report);
 
             return response()->json([
                 'message' => 'Report deleted successfully',
