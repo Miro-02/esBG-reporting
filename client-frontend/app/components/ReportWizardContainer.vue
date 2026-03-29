@@ -3,8 +3,8 @@
     <!-- Sidebar with step timeline -->
     <div class="wizard-sidebar">
       <div class="sidebar-header">
-        <h1 class="sidebar-title">Creating new report</h1>
-        <p class="sidebar-subtitle">Create it in 9 steps</p>
+        <h1 class="sidebar-title">{{ formStore.reportId ? 'Editing report' : 'Creating new report' }}</h1>
+        <p class="sidebar-subtitle">{{ formStore.reportId ? 'Update it in 9 steps' : 'Create it in 9 steps' }}</p>
       </div>
 
       <!-- Step timeline -->

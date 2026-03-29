@@ -1,5 +1,5 @@
 <template>
-  <header class="!bg-[#11298a] h-[100px] flex items-center" elevation="0">
+  <header class="!bg-[#11298a] h-[100px] flex items-center sticky top-0 z-50" elevation="0">
     <div class="w-full max-w-7xl mx-auto flex items-center gap-8">
       <!-- Logo -->
       <NuxtLink to="/" class="no-underline">
@@ -47,9 +47,9 @@
           <NuxtLink to="/reports/create" class="no-underline text-white hover:text-gray-300 text-[20px] font-medium">
             Create a report
           </NuxtLink>
-          <NuxtLink to="/statistics" class="no-underline text-white hover:text-gray-300 text-[20px] font-medium">
+          <!-- <NuxtLink to="/statistics" class="no-underline text-white hover:text-gray-300 text-[20px] font-medium">
             My statistics
-          </NuxtLink>
+          </NuxtLink> -->
           
           <AppButton
             @click="handleLogout"

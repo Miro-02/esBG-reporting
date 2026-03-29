@@ -64,9 +64,18 @@ export const useAuthStore = defineStore('auth', () => {
       const res = await $api.get('/api/auth/me')
       isLoggedIn.value = true
       user.value = res.data.user
-    } catch (error) {
-      isLoggedIn.value = false
-      user.value = null
+      token.value = token.value // keep existing token
+    } catch (error: any) {
+      // Only clear auth if we get a 401 (token is invalid)
+      // For other errors, keep the token and try again later
+      if (error.response?.status === 401) {
+        isLoggedIn.value = false
+        user.value = null
+        token.value = null
+        localStorage.removeItem('auth_token')
+      }
+      // For other errors (network, server error), keep the token
+      // The next API call might work
     }
   }
 

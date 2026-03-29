@@ -181,10 +181,8 @@ const handleNextStep = async () => {
  */
 const handleComplete = async () => {
   try {
-    // All steps completed, redirect to report detail
-    if (formStore.reportId) {
-      await router.push(`/reports/${formStore.reportId}`)
-    }
+    // All steps completed, redirect to reports list
+    await router.push('/reports')
   }
   catch (error) {
     console.error('Failed to complete form:', error)

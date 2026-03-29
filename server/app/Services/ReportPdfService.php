@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 use Modules\Reports\Models\Report;
 
 class ReportPdfService
@@ -15,10 +16,13 @@ class ReportPdfService
      */
     public function generatePdf(Report $report): string
     {
-        // Load all relationships
+        // Load all relationships including nested ones
+        // This prevents lazy-loading issues in DomPDF
         $report->load(
             'user',
-            'section1',
+            'section1.legalForm',
+            'section1.country',
+            'section1.sector',
             'section2',
             'section3',
             'section4',
@@ -50,8 +54,8 @@ class ReportPdfService
      */
     public function getFileName(Report $report): string
     {
-        $reportName = str_slug($report->name ?? 'report');
-        $period = str_slug($report->reporting_period ?? 'document');
+        $reportName = Str::slug($report->name ?? 'report');
+        $period = Str::slug($report->reporting_period ?? 'document');
 
         return "{$reportName}_{$period}.pdf";
     }
