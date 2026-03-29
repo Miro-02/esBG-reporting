@@ -14,9 +14,18 @@
           <h1>My Reports</h1>
           <p class="header-subtitle">Manage and download your ESG reports</p>
         </div>
-        <NuxtLink to="/reports/create" class="btn btn-primary btn-lg">
-          + Create New Report
-        </NuxtLink>
+        <div class="header-actions">
+          <button 
+            class="btn btn-secondary btn-lg"
+            @click="importDialogOpen = true"
+            title="Import reports from Excel file"
+          >
+            📥 Import Reports
+          </button>
+          <NuxtLink to="/reports/create" class="btn btn-primary btn-lg">
+            + Create New Report
+          </NuxtLink>
+        </div>
       </div>
     </div>
 
@@ -211,6 +220,13 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Report Import Dialog -->
+    <ReportImportDialog 
+      :open="importDialogOpen"
+      @update:open="importDialogOpen = $event"
+      @import-complete="handleImportComplete"
+    />
   </div>
 </template>
 
@@ -219,6 +235,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
 import { useReportApi } from '~/composables/useReportApi'
+import ReportImportDialog from '~/components/ReportImportDialog.vue'
+import type { ImportResult } from '~/composables/useReportImport'
 
 interface Report {
   id: number
@@ -248,6 +266,7 @@ const generatingId = ref<number | null>(null)
 const deletingId = ref<number | null>(null)
 const showDeleteModal = ref(false)
 const reportToDelete = ref<Report | null>(null)
+const importDialogOpen = ref(false)
 const errorMessage = ref<string | null>(null)
 
 // Filter state
@@ -578,6 +597,21 @@ const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info')
     toast.value.show = false
   }, 3000)
 }
+
+/**
+ * Handle import completion
+ */
+const handleImportComplete = async (result: ImportResult) => {
+  if (result.successCount > 0) {
+    showToast(`Successfully imported ${result.successCount} report(s)`, 'success')
+  }
+  if (result.failureCount > 0) {
+    showToast(`${result.failureCount} row(s) failed to import. Check the dialog for details.`, 'info')
+  }
+  
+  // Refresh reports list
+  await fetchReports()
+}
 </script>
 
 <style scoped>
@@ -623,6 +657,14 @@ const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info')
   font-size: 1rem;
   color: #6b7280;
   margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════ */

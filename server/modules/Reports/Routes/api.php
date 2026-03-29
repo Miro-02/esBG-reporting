@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Reports\Controllers\ReportController;
+use Modules\Reports\Controllers\ImportReportController;
 
 // Protected routes - require authentication
 Route::middleware('auth:sanctum')->group(function () {
@@ -10,6 +11,9 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Create a new report
     Route::post('/', [ReportController::class, 'store']);
+    
+    // Bulk import reports from Excel
+    Route::post('/import', [ImportReportController::class, 'store']);
     
     // Get a single report
     Route::get('/{report}', [ReportController::class, 'show']);

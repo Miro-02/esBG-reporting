@@ -5,7 +5,8 @@ return [
     
     'allowed_methods' => ['*'],
     
-    'allowed_origins' => ['*'], // Permissive for hackathon - restrict in production
+    // Allow ALL origins - hackathon mode only!
+    'allowed_origins' => ['*'],
     
     'allowed_origins_patterns' => [],
     
@@ -15,5 +16,6 @@ return [
     
     'max_age' => 0,
     
-    'supports_credentials' => true, // This is crucial!
+    // Disable credentials check for hackathon
+    'supports_credentials' => false,
 ];
