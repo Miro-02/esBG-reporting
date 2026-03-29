@@ -538,11 +538,11 @@
                 <div class="kpi-value">{{ $report->section3->renewable_energy_usage }}%</div>
                 <div class="kpi-status @if($report->section3->renewable_energy_usage >= 50) success @else warning @endif">
                     @if($report->section3->renewable_energy_usage >= 75)
-                        ✓ On Target
+                        On Target
                     @elseif($report->section3->renewable_energy_usage >= 50)
-                        △ Monitor
+                        Monitor
                     @else
-                        ✗ Below Target
+                        Below Target
                     @endif
                 </div>
             </div>
@@ -743,7 +743,7 @@
                 <div class="field-label">Renewable Energy Usage (%)</div>
                 <div class="field-value">
                     {{ $report->section3->renewable_energy_usage ?? 'N/A' }}%
-                    <span class="status-badge @if($report->section3->renewable_energy_usage >= 50) success @elseif($report->section3->renewable_energy_usage >= 30) warning @else critical @endif">@if($report->section3->renewable_energy_usage >= 75) ✓ On Target @elseif($report->section3->renewable_energy_usage >= 50) △ Monitor @else ✗ Below Target @endif</span>
+                    <span class="status-badge @if($report->section3->renewable_energy_usage >= 50) success @elseif($report->section3->renewable_energy_usage >= 30) warning @else critical @endif">@if($report->section3->renewable_energy_usage >= 75) On Target @elseif($report->section3->renewable_energy_usage >= 50) Monitor @else Below Target @endif</span>
                 </div>
             </div>
 
@@ -805,7 +805,7 @@
                 <div class="field-label">Gender Diversity (%)</div>
                 <div class="field-value">
                     {{ $report->section4->gender_diversity ?? 'N/A' }}%
-                    <span class="status-badge @if($report->section4->gender_diversity >= 40) success @elseif($report->section4->gender_diversity >= 30) warning @else critical @endif">@if($report->section4->gender_diversity >= 40) ✓ On Target @elseif($report->section4->gender_diversity >= 30) △ Monitor @else ✗ Below Target @endif</span>
+                    <span class="status-badge @if($report->section4->gender_diversity >= 40) success @elseif($report->section4->gender_diversity >= 30) warning @else critical @endif">@if($report->section4->gender_diversity >= 40) On Target @elseif($report->section4->gender_diversity >= 30) Monitor @else Below Target @endif</span>
                 </div>
             </div>
 

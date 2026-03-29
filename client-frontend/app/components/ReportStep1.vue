@@ -9,9 +9,8 @@
     <div class="form-grid">
       <!-- Report Name -->
       <div class="form-group full-width">
-        <label for="name" class="form-label">
+        <label for="name" class="form-label required">
           Report Name
-          <span class="required">*</span>
         </label>
         <input
           id="name"
@@ -50,9 +49,8 @@
 
       <!-- Start Date -->
       <div class="form-group">
-        <label for="start_date" class="form-label">
+        <label for="start_date" class="form-label required">
           Start Date
-          <span class="required">*</span>
         </label>
         <input
           id="start_date"
@@ -73,9 +71,8 @@
 
       <!-- End Date -->
       <div class="form-group">
-        <label for="end_date" class="form-label">
+        <label for="end_date" class="form-label required">
           End Date
-          <span class="required">*</span>
         </label>
         <input
           id="end_date"
@@ -200,7 +197,8 @@ defineExpose({
   gap: 0.25rem;
 }
 
-.required {
+.form-label.required::after {
+  content: " *";
   color: #ef4444;
 }
 
