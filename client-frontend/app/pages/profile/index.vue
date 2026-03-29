@@ -12,19 +12,33 @@
         </div>
 
         <!-- Alert Messages -->
-        <AppAlert
-          v-if="successMessage"
-          type="success"
-          :message="successMessage"
-          @close="successMessage = ''"
-        />
+        <Transition name="slide-down">
+          <AppAlert
+            v-if="successMessage"
+            type="success"
+            class="alert-success"
+            @close="successMessage = ''"
+          >
+            <div class="alert-content">
+              <span class="alert-icon">✓</span>
+              <span>{{ successMessage }}</span>
+            </div>
+          </AppAlert>
+        </Transition>
 
-        <AppAlert
-          v-if="errorMessage"
-          type="error"
-          :message="errorMessage"
-          @close="errorMessage = ''"
-        />
+        <Transition name="slide-down">
+          <AppAlert
+            v-if="errorMessage"
+            type="error"
+            class="alert-error"
+            @close="errorMessage = ''"
+          >
+            <div class="alert-content">
+              <span class="alert-icon">⚠</span>
+              <span>{{ errorMessage }}</span>
+            </div>
+          </AppAlert>
+        </Transition>
 
         <!-- Profile Form -->
         <div class="form-card">
@@ -36,18 +50,18 @@
             </div>
             <div class="form-grid">
               <div class="form-group">
-                <label for="name" class="form-label required">Company Name</label>
+                <label for="company_name" class="form-label required">Company Name</label>
                 <input
-                  id="name"
-                  v-model="formData.name"
+                  id="company_name"
+                  v-model="formData.company_name"
                   type="text"
                   placeholder="Enter company name"
-                  :aria-invalid="!!errors.name"
-                  :aria-describedby="errors.name ? 'name-error' : undefined"
+                  :aria-invalid="!!errors.company_name"
+                  :aria-describedby="errors.company_name ? 'company_name-error' : undefined"
                   class="form-input"
                 />
-                <div v-if="errors.name" :id="`name-error`" role="alert" class="form-error">
-                  {{ errors.name }}
+                <div v-if="errors.company_name" :id="`company_name-error`" role="alert" class="form-error">
+                  {{ errors.company_name }}
                 </div>
               </div>
               <div class="form-group">
@@ -266,7 +280,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useReportDropdowns } from '~/composables/useReportDropdowns'
 
 definePageMeta({
@@ -281,9 +295,9 @@ const { dropdowns, fetchAllDropdowns } = useReportDropdowns()
 const isLoading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
+let successTimeout: NodeJS.Timeout | null = null
 
 const formData = ref({
-  name: '',
   company_name: '',
   legal_form_id: null as number | null,
   country_id: null as number | null,
@@ -313,7 +327,6 @@ const loadProfileData = async () => {
     
     if (profileData) {
       // Ensure all numeric fields are properly converted
-      formData.value.name = profileData.name || ''
       formData.value.company_name = profileData.company_name || ''
       formData.value.legal_form_id = profileData.legal_form_id ? parseInt(profileData.legal_form_id) : null
       formData.value.country_id = profileData.country_id ? parseInt(profileData.country_id) : null
@@ -344,16 +357,24 @@ const submitForm = async () => {
     errors.value = {}
     successMessage.value = ''
     errorMessage.value = ''
+    
+    // Clear any pending success timeout
+    if (successTimeout) clearTimeout(successTimeout)
 
     const response = await $api.put<{ message: string, data: any }>('/api/profile', formData.value)
 
-    if (response.data?.message) {
-      successMessage.value = response.data.message
+    if (response.status === 200) {
+      successMessage.value = response.data?.message || 'Changes saved successfully'
       
       // Reload profile data to show updated values
       setTimeout(() => {
         loadProfileData()
       }, 500)
+      
+      // Auto-dismiss success banner after 3 seconds
+      successTimeout = setTimeout(() => {
+        successMessage.value = ''
+      }, 3000)
     }
   } catch (error: any) {
     if (error.response?.data?.errors) {
@@ -382,6 +403,13 @@ onMounted(async () => {
   
   await fetchAllDropdowns()
   await loadProfileData()
+})
+
+/**
+ * Clean up timeouts before unmounting
+ */
+onBeforeUnmount(() => {
+  if (successTimeout) clearTimeout(successTimeout)
 })
 </script>
 
@@ -758,6 +786,53 @@ onMounted(async () => {
   font-weight: 500;
   margin-top: 0.25rem;
   display: block;
+}
+
+/* ── Alert Messages ──────────────────────────────────────── */
+.alert-success,
+.alert-error {
+  margin-bottom: 2rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.alert-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* ── Slide Down Transition ──────────────────────────────── */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Responsive ──────────────────────────────────────────── */

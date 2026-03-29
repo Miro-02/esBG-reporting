@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useReportFormStore } from '~/stores/reportForm'
 import { useReportValidation } from '~/composables/useReportValidation'
 import { useReportDropdowns } from '~/composables/useReportDropdowns'
@@ -154,11 +154,114 @@ import ReportStepBase from '~/components/ReportStepBase.vue'
 const formStore = useReportFormStore()
 const { validateSection1 } = useReportValidation()
 const { isLoading: isLoadingDropdowns, error: dropdownsError, dropdowns, fetchAllDropdowns } = useReportDropdowns()
+const { $api } = useNuxtApp()
 
 const errors = ref<string[]>([])
+const hasAttemptedPrepopulate = ref(false)
 
 onMounted(() => {
+  console.log('[ReportStep2] Component mounted')
+  console.log('[ReportStep2] Current reportId:', formStore.reportId)
+  console.log('[ReportStep2] Current formData.section1:', formStore.formData.section1)
+  
   fetchAllDropdowns()
+})
+
+/**
+ * Load user's company data and prepopulate form fields
+ */
+const loadUserCompanyData = async () => {
+  console.log('[ReportStep2] loadUserCompanyData called')
+  console.log('[ReportStep2] hasAttemptedPrepopulate:', hasAttemptedPrepopulate.value)
+  console.log('[ReportStep2] reportId:', formStore.reportId)
+  
+  if (hasAttemptedPrepopulate.value) {
+    console.log('[ReportStep2] Already attempted prepopulation, skipping')
+    return
+  }
+  
+  hasAttemptedPrepopulate.value = true
+  
+  try {
+    console.log('[ReportStep2] Fetching user profile data...')
+    const response = await $api.get<any>('/api/profile')
+    
+    console.log('[ReportStep2] API Response:', response)
+    
+    // Extract the actual user data from the response
+    const userData = response.data.data || response.data
+    
+    console.log('[ReportStep2] User data received:', userData)
+    
+    if (userData) {
+      console.log('[ReportStep2] Populating section1 fields...')
+      console.log('[ReportStep2] Full userData object:', userData)
+      console.log('[ReportStep2] userData.company_name:', userData.company_name)
+      console.log('[ReportStep2] userData.country_id:', userData.country_id)
+      console.log('[ReportStep2] userData.sector_id:', userData.sector_id)
+      console.log('[ReportStep2] userData.legal_form_id:', userData.legal_form_id)
+      console.log('[ReportStep2] userData.annual_revenue:', userData.annual_revenue)
+      console.log('[ReportStep2] userData.number_of_employees:', userData.number_of_employees)
+      console.log('[ReportStep2] userData.number_of_locations:', userData.number_of_locations)
+      console.log('[ReportStep2] userData.is_subsidiary:', userData.is_subsidiary)
+      
+      // Prepopulate all fields - only if they're empty
+      if (!formStore.formData.section1.company_name) {
+        formStore.formData.section1.company_name = userData.company_name || ''
+        console.log('[ReportStep2] Set company_name to:', formStore.formData.section1.company_name)
+      }
+      
+      if (!formStore.formData.section1.country_id) {
+        formStore.formData.section1.country_id = userData.country_id || null
+        console.log('[ReportStep2] Set country_id to:', formStore.formData.section1.country_id)
+      }
+      
+      if (!formStore.formData.section1.sector_id) {
+        formStore.formData.section1.sector_id = userData.sector_id || null
+        console.log('[ReportStep2] Set sector_id to:', formStore.formData.section1.sector_id)
+      }
+      
+      if (!formStore.formData.section1.legal_form_id) {
+        formStore.formData.section1.legal_form_id = userData.legal_form_id || null
+        console.log('[ReportStep2] Set legal_form_id to:', formStore.formData.section1.legal_form_id)
+      }
+      
+      if (!formStore.formData.section1.annual_revenue) {
+        formStore.formData.section1.annual_revenue = userData.annual_revenue ? parseFloat(userData.annual_revenue) : null
+        console.log('[ReportStep2] Set annual_revenue to:', formStore.formData.section1.annual_revenue)
+      }
+      
+      if (!formStore.formData.section1.number_of_employees) {
+        formStore.formData.section1.number_of_employees = userData.number_of_employees || null
+        console.log('[ReportStep2] Set number_of_employees to:', formStore.formData.section1.number_of_employees)
+      }
+      
+      if (!formStore.formData.section1.number_of_locations) {
+        formStore.formData.section1.number_of_locations = userData.number_of_locations || null
+        console.log('[ReportStep2] Set number_of_locations to:', formStore.formData.section1.number_of_locations)
+      }
+      
+      if (formStore.formData.section1.is_subsidiary === undefined || formStore.formData.section1.is_subsidiary === null) {
+        formStore.formData.section1.is_subsidiary = userData.is_subsidiary || false
+        console.log('[ReportStep2] Set is_subsidiary to:', formStore.formData.section1.is_subsidiary)
+      }
+      
+      console.log('[ReportStep2] Final section1 state:', formStore.formData.section1)
+    } else {
+      console.log('[ReportStep2] No user data returned')
+    }
+  } catch (error) {
+    console.error('[ReportStep2] Error loading user company data:', error)
+  }
+}
+
+// Watch for dropdowns loading to complete, then prepopulate
+watch(() => isLoadingDropdowns.value, (loading) => {
+  console.log('[ReportStep2] Dropdowns loading state changed:', loading)
+  if (!loading && !hasAttemptedPrepopulate.value) {
+    console.log('[ReportStep2] Dropdowns finished loading, calling prepopulation')
+    loadUserCompanyData()
+  }
 })
 
 const savedErrors = computed(() => {
