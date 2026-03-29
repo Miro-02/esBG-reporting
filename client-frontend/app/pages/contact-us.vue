@@ -156,9 +156,9 @@
 import { reactive } from 'vue'
 
 const contactItems = [
-  { icon: '✉', label: 'Email', value: 'info@esbg-reporting.com' },
-  { icon: '☎', label: 'Phone', value: '+1 (555) 123-4567' },
-  { icon: '◎', label: 'Address', value: '123 Business St, City, State 12345' },
+  { icon: '✉', label: 'Email', value: 'easyg@gmail.com' },
+  { icon: '☎', label: 'Phone', value: '+359 88 123 4567' },
+  { icon: '◎', label: 'Address', value: 'Ovcha Kupel 15, Sofia, Bulgaria' },
 ]
 
 const form = reactive({

@@ -119,7 +119,7 @@
         <div class="card-header">
           <div class="card-title-section">
             <h3 class="card-title">{{ report.name }}</h3>
-            <button
+            <!-- <button
               class="btn-icon btn-download"
               :disabled="downloadingId === report.id"
               :title="`Download PDF for ${report.name}`"
@@ -127,7 +127,7 @@
             >
               <span v-if="downloadingId === report.id" class="spinner-small" />
               <span v-else class="icon">↓</span>
-            </button>
+            </button> -->
           </div>
           <p class="card-date">{{ formatDate(report.created_at) }}</p>
         </div>

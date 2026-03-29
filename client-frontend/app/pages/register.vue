@@ -592,11 +592,6 @@ const submit = async () => {
 
     await authStore.register(registerRequest)
     showSuccess.value = true
-
-    // Redirect after 3 seconds
-    setTimeout(() => {
-      router.push("/")
-    }, 3000)
   } catch (err: any) {
     const apiError = err.response?.data as ApiError
     error.value = apiError?.message || "Registration failed. Please try again."

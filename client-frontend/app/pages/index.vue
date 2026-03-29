@@ -8,7 +8,7 @@
       <AppContainer>
         <div class="hero-content col-7">
           <h1 class="hero-title">Make ESG easy!</h1>
-          <p class="hero-sub">Generate professional ESG reports in minutes. Make it easy and fast with us :)</p>
+          <p class="hero-sub">Generate professional ESG reports in minutes.<br> Make it easy and fast with us</p>
           <a href="#" class="hero-cta">Get your ESG score</a>
         </div>
       </AppContainer>
