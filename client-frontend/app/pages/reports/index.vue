@@ -118,7 +118,20 @@
         <!-- Card Header with Title and Download -->
         <div class="card-header">
           <div class="card-title-section">
-            <h3 class="card-title">{{ report.name }}</h3>
+            <div class="title-with-badge">
+              <h3 class="card-title">{{ report.name }}</h3>
+              <!-- Violations Badge Icon -->
+              <button
+                v-if="(reportViolations[report.id]?.length ?? 0) > 0"
+                @click="openViolationsModal(report.id)"
+                class="violations-badge"
+                :title="`${reportViolations[report.id]?.length ?? 0} compliance violation(s) found`"
+                aria-label="View compliance violations"
+              >
+                <span class="badge-icon">ⓘ</span>
+                <span class="badge-count">{{ reportViolations[report.id]?.length ?? 0 }}</span>
+              </button>
+            </div>
             <!-- <button
               class="btn-icon btn-download"
               :disabled="downloadingId === report.id"
@@ -227,6 +240,21 @@
       @update:open="importDialogOpen = $event"
       @import-complete="handleImportComplete"
     />
+
+    <!-- Report Violations Modal -->
+    <ReportViolationsModal
+      :model-value="showViolationsModal"
+      :violations="currentReportViolations"
+      @update:model-value="showViolationsModal = $event"
+      @contact-support="openContactDialog"
+    />
+
+    <!-- Contact Support Dialog -->
+    <ReportViolationsContactDialog
+      :model-value="showContactDialog"
+      :violations="currentReportViolations"
+      @update:model-value="showContactDialog = $event"
+    />
   </div>
 </template>
 
@@ -235,8 +263,12 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
 import { useReportApi } from '~/composables/useReportApi'
+import { useReportViolations } from '~/composables/useReportViolations'
 import ReportImportDialog from '~/components/ReportImportDialog.vue'
+import ReportViolationsModal from '~/components/ReportViolationsModal.vue'
+import ReportViolationsContactDialog from '~/components/ReportViolationsContactDialog.vue'
 import type { ImportResult } from '~/composables/useReportImport'
+import type { Violation } from '~/composables/useReportViolations'
 
 interface Report {
   id: number
@@ -257,6 +289,7 @@ interface Toast {
 const router = useRouter()
 const authStore = useAuthStore()
 const { listReports, deleteReport } = useReportApi()
+const { violations, fetchViolations } = useReportViolations()
 const { $api } = useNuxtApp()
 
 const reports = ref<Report[]>([])
@@ -268,6 +301,15 @@ const showDeleteModal = ref(false)
 const reportToDelete = ref<Report | null>(null)
 const importDialogOpen = ref(false)
 const errorMessage = ref<string | null>(null)
+
+// Violations modal state
+const reportViolations = ref<Record<number, Violation[]>>({})
+const showViolationsModal = ref(false)
+const showContactDialog = ref(false)
+const currentReportViolations = computed(() => {
+  // Return sorted violations by section number
+  return (violations.value || []).sort((a, b) => a.section - b.section)
+})
 
 // Filter state
 const searchQuery = ref('')
@@ -348,6 +390,9 @@ const fetchReports = async () => {
     errorMessage.value = null
     const data = await listReports()
     reports.value = Array.isArray(data) ? data : []
+    
+    // Load violations for all reports in parallel
+    await loadAllViolations()
   }
   catch (error: any) {
     console.error('Failed to load reports:', error)
@@ -611,6 +656,50 @@ const handleImportComplete = async (result: ImportResult) => {
   
   // Refresh reports list
   await fetchReports()
+}
+
+/**
+ * Open violations modal and fetch violations for a report
+ */
+const openViolationsModal = async (reportId: number) => {
+  try {
+    // Fetch violations if not already cached
+    if (!reportViolations.value[reportId]) {
+      await fetchViolations(reportId)
+      reportViolations.value[reportId] = violations.value
+    } else {
+      // Use cached violations
+      violations.value = reportViolations.value[reportId]
+    }
+    
+    showViolationsModal.value = true
+  } catch (error: any) {
+    console.error('Failed to fetch violations:', error)
+    showToast('Failed to load violations', 'error')
+  }
+}
+
+/**
+ * Open contact support dialog
+ */
+const openContactDialog = () => {
+  showViolationsModal.value = false
+  showContactDialog.value = true
+}
+
+/**
+ * Fetch violations for all reports in the list
+ */
+const loadAllViolations = async () => {
+  for (const report of reports.value) {
+    try {
+      await fetchViolations(report.id)
+      reportViolations.value[report.id] = violations.value
+    } catch (error) {
+      // Silently fail - violations not critical
+      console.debug(`Failed to load violations for report ${report.id}`)
+    }
+  }
 }
 </script>
 
@@ -1195,6 +1284,84 @@ const handleImportComplete = async (result: ImportResult) => {
     right: 1rem;
     bottom: 1rem;
     max-width: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/* Violations Badge */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+.title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.violations-badge {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.violations-badge:hover {
+  background: #991b1b;
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.4);
+  transform: scale(1.1);
+}
+
+.violations-badge:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+.badge-icon {
+  display: inline-block;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #7f1d1d;
+  border-radius: 50%;
+  font-size: 0.625rem;
+  font-weight: bold;
+  border: 1px solid white;
+}
+
+@media (max-width: 640px) {
+  .violations-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .badge-count {
+    width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
   }
 }
 </style>

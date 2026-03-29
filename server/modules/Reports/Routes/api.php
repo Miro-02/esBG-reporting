@@ -39,4 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Generate PDF for a report
     Route::get('/{report}/generate-pdf', [ReportController::class, 'generatePdf']);
+
+    // Get compliance violations for a report
+    Route::get('/{report}/violations', [ReportController::class, 'getViolations']);
 });

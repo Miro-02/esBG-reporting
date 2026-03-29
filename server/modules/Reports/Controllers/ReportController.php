@@ -341,4 +341,39 @@ class ReportController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get detailed compliance violations for a report
+     */
+    public function getViolations(Request $request, Report $report): JsonResponse
+    {
+        try {
+            // Check if user owns this report
+            if ($report->user_id !== $request->user()->id) {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            // Load all section relations needed for compliance check
+            $report->load(['section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7']);
+
+            $complianceCheckService = new \App\Services\ComplianceCheckService();
+            $violations = $complianceCheckService->getDetailedViolations($report);
+
+            return response()->json([
+                'message' => 'Violations retrieved successfully',
+                'data' => [
+                    'violations' => $violations,
+                    'count' => count($violations),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to retrieve violations',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
+
