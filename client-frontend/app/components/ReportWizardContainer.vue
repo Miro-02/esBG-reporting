@@ -1,73 +1,78 @@
 <template>
   <div class="report-wizard">
     <!-- Sidebar with step timeline -->
-    <div class="wizard-sidebar">
+    <nav class="wizard-sidebar" aria-label="Report wizard steps">
       <div class="sidebar-header">
         <h1 class="sidebar-title">{{ formStore.reportId ? 'Editing report' : 'Creating new report' }}</h1>
         <p class="sidebar-subtitle">{{ formStore.reportId ? 'Update it in 9 steps' : 'Create it in 9 steps' }}</p>
       </div>
 
       <!-- Step timeline -->
-      <div class="steps-timeline">
-        <div v-for="step in 9" :key="step" class="timeline-item">
+      <div class="steps-timeline" role="tablist">
+        <div v-for="step in 9" :key="step" class="timeline-item" role="presentation">
           <!-- Timeline dot and connector -->
           <div class="timeline-marker">
             <button
               class="step-dot"
               :class="{ 'is-current': formStore.currentStep === step }"
+              :aria-selected="formStore.currentStep === step"
+              :aria-label="`${getStepTitle(step)} - Step ${step}`"
+              role="tab"
               @click="formStore.setCurrentStep(step)"
             >
-              <span v-if="formStore.currentStep === step" class="checkmark-icon">✓</span>
-              <span v-else>{{ step }}</span>
+              <span v-if="formStore.currentStep === step" class="checkmark-icon" aria-hidden="true">✓</span>
+              <span v-else aria-hidden="true">{{ step }}</span>
             </button>
-            <div v-if="step < 9" class="timeline-connector" />
+            <div v-if="step < 9" class="timeline-connector" aria-hidden="true" />
           </div>
 
           <!-- Step label -->
           <div class="step-label">
-            <p class="step-number">Step {{ step }}</p>
-            <p class="step-title">{{ getStepTitle(step) }}</p>
+            <p class="step-number" aria-hidden="true">Step {{ step }}</p>
+            <p class="step-title" aria-hidden="true">{{ getStepTitle(step) }}</p>
           </div>
         </div>
       </div>
 
       <!-- Progress indicator -->
-      <div class="progress-section">
+      <div class="progress-section" aria-live="polite" aria-atomic="true">
         <div class="progress-text">
           <p>{{ formStore.completionPercentage }}% Complete</p>
         </div>
-        <div class="progress-bar">
+        <div class="progress-bar" role="progressbar" :aria-valuenow="formStore.completionPercentage" aria-valuemin="0" aria-valuemax="100">
           <div
             class="progress-fill"
             :style="{ width: `${formStore.completionPercentage}%` }"
           />
         </div>
       </div>
-    </div>
+    </nav>
 
     <!-- Main content area -->
-    <div class="wizard-content">
+    <article class="wizard-content">
       <!-- Content wrapper with transitions -->
       <Transition name="fade" mode="out-in">
-        <div :key="formStore.currentStep" class="step-content">
+        <div :key="formStore.currentStep" class="step-content" role="tabpanel">
           <slot :step="formStore.currentStep" :is-saving="isSaving" />
         </div>
       </Transition>
 
       <!-- Footer with navigation -->
-      <div class="wizard-footer">
+      <footer class="wizard-footer">
         <div class="footer-actions">
           <button
             class="btn btn-secondary"
             :disabled="formStore.currentStep === 1 || isSaving"
             @click="formStore.goToPreviousStep"
+            :aria-label="`Go to previous step ${formStore.currentStep - 1}`"
+            :aria-disabled="formStore.currentStep === 1 || isSaving"
           >
             ← Back
           </button>
 
-          <div class="save-status">
+          <div class="save-status" aria-live="polite" aria-atomic="true">
             <span v-if="isSaving" class="status-loading">
-              <span class="spinner" />
+              <span class="spinner" aria-hidden="true" />
               Saving...
             </span>
             <span
@@ -86,6 +91,8 @@
             class="btn btn-primary"
             :disabled="isSaving"
             @click="$emit('next-step')"
+            :aria-label="`Go to next step ${formStore.currentStep + 1}: ${getStepTitle(formStore.currentStep + 1 as any)}`"
+            :aria-disabled="isSaving"
           >
             Next →
           </button>
@@ -94,12 +101,14 @@
             class="btn btn-success"
             :disabled="isSaving"
             @click="$emit('complete')"
+            aria-label="Complete and submit report"
+            :aria-disabled="isSaving"
           >
             Complete Report
           </button>
         </div>
-      </div>
-    </div>
+      </footer>
+    </article>
   </div>
 </template>
 
@@ -209,12 +218,20 @@ const isSaving = computed(() => {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  outline: none;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .step-dot:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
   transform: scale(1.05);
+}
+
+.step-dot:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
 
 .step-dot.is-current {
@@ -404,6 +421,14 @@ const isSaving = computed(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  outline: none;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #1e3a8a;
+  outline-offset: 2px;
 }
 
 .btn:disabled {

@@ -6,6 +6,14 @@ export default defineNuxtConfig({
   
   app: {
     head: {
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        { name: 'description', content: 'ESG Reporting - Make ESG easy and fast' },
+        { name: 'theme-color', content: '#11298a' },
+        // Accessibility meta
+        { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
+      ],
       link: [
         { rel: "icon", type: "image/svg+xml", href: "/logo.svg" }
       ]

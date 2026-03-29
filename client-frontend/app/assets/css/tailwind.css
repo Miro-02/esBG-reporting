@@ -1,8 +1,62 @@
 @import "tailwindcss";
 
-/* Global rounded styling */
+/* ───────────────────────────────────────────────────────────── */
+/*  Screen Reader Only & Accessibility Classes                    */
+/* ───────────────────────────────────────────────────────────── */
+
 @layer components {
-  /* Input fields */
+  /* Screen reader only content - hidden from visual view but visible to assistive tech */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+  }
+
+  /* Screen reader only but still focusable (skip links) */
+  .sr-only-focusable:focus,
+  .sr-only-focusable:focus-within {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Focus Visible - Keyboard Navigation Indicators               */
+  /* ───────────────────────────────────────────────────────────── */
+
+  /* Focus ring for all interactive elements */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible,
+  [role="button"]:focus-visible,
+  [role="menuitem"]:focus-visible,
+  [role="tab"]:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-blue-900 rounded;
+  }
+
+  /* Ensure focused form elements are visible */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-2 ring-offset-1 ring-blue-900;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Responsive Input Fields (Mobile-first)                       */
+  /* ───────────────────────────────────────────────────────────── */
+
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -12,19 +66,227 @@
   input[type="time"],
   textarea,
   select {
-    @apply rounded-[12px];
+    @apply rounded-lg;
+    /* Mobile-first: ensure adequate touch target */
+    @apply min-h-12;
   }
 
-  /* Buttons */
+  /* Tablet and up: refine padding */
+  @screen md {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    textarea,
+    select {
+      @apply text-base;
+    }
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Responsive Buttons                                           */
+  /* ───────────────────────────────────────────────────────────── */
+
   button {
     @apply rounded-full;
+    /* Ensure minimum touch target for mobile (44px) */
+    @apply min-h-11 min-w-11;
   }
 
-  /* Cards and containers */
+  /* Disabled button styling */
+  button:disabled,
+  button[aria-disabled="true"] {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Cards and Containers                                         */
+  /* ───────────────────────────────────────────────────────────── */
+
   .card,
   [role="dialog"],
   .dialog {
-    @apply rounded-[24px];
+    @apply rounded-2xl;
   }
 
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Typography - Responsive Text Sizing                          */
+  /* ───────────────────────────────────────────────────────────── */
+
+  /* Headings - ensure readable size across devices */
+  h1 {
+    @apply text-2xl md:text-4xl font-bold;
+    @apply leading-tight md:leading-relaxed;
+  }
+
+  h2 {
+    @apply text-xl md:text-3xl font-bold;
+    @apply leading-snug md:leading-relaxed;
+  }
+
+  h3 {
+    @apply text-lg md:text-2xl font-bold;
+    @apply leading-snug;
+  }
+
+  h4, h5, h6 {
+    @apply text-base md:text-lg font-bold;
+    @apply leading-relaxed;
+  }
+
+  /* Body text - readable on all devices */
+  p, span, div {
+    @apply text-sm md:text-base;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Lists - Accessible Structure                                 */
+  /* ───────────────────────────────────────────────────────────── */
+
+  ul, ol {
+    @apply ml-4 md:ml-6;
+  }
+
+  li {
+    @apply mb-2;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Links - Visible Focus and Contrast                           */
+  /* ───────────────────────────────────────────────────────────── */
+
+  a {
+    @apply text-blue-900 underline;
+  }
+
+  a:hover {
+    @apply text-blue-700 no-underline;
+  }
+
+  a:focus-visible {
+    @apply ring-2 ring-offset-2 ring-blue-900 rounded px-1;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Images - Responsive and Accessible                           */
+  /* ───────────────────────────────────────────────────────────── */
+
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Forms - Accessible Patterns                                  */
+  /* ───────────────────────────────────────────────────────────── */
+
+  label {
+    @apply block font-medium text-sm md:text-base;
+    @apply mb-2;
+  }
+
+  /* Required field indicator */
+  .required::after,
+  [aria-required="true"]::after {
+    content: " *";
+    @apply text-red-600;
+  }
+
+  /* Form field error state */
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"],
+  select[aria-invalid="true"] {
+    @apply border-red-600 border-2;
+  }
+
+  /* Error message styling */
+  .error-message,
+  [role="alert"] {
+    @apply text-red-600 text-sm font-medium;
+    @apply mt-1;
+  }
+
+  /* Success message styling */
+  .success-message {
+    @apply text-green-600 text-sm font-medium;
+    @apply mt-1;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Skip Navigation Link (hidden by default, visible on focus)   */
+  /* ───────────────────────────────────────────────────────────── */
+
+  .skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background-color: #11298a;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    z-index: 100;
+    border-radius: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .skip-to-content:focus {
+    top: 0;
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Utility Classes - Responsive Spacing                         */
+  /* ───────────────────────────────────────────────────────────── */
+
+  .responsive-padding {
+    @apply px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8;
+  }
+
+  .responsive-gap {
+    @apply gap-4 md:gap-6 lg:gap-8;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Mobile-first Grid System                                     */
+  /* ───────────────────────────────────────────────────────────── */
+
+  .grid-responsive-auto {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .grid-responsive-2col {
+    @apply grid grid-cols-1 md:grid-cols-2;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Ensure minimum touch target size (WCAG AAA: 44x44px)         */
+  /* ───────────────────────────────────────────────────────────── */
+
+  .touch-target {
+    @apply min-h-11 min-w-11;
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  High Contrast Mode Support                                   */
+  /* ───────────────────────────────────────────────────────────── */
+
+  @media (prefers-contrast: more) {
+    button, a, input, select, textarea {
+      @apply font-bold;
+    }
+  }
+
+  /* ───────────────────────────────────────────────────────────── */
+  /*  Reduced Motion Support                                       */
+  /* ───────────────────────────────────────────────────────────── */
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 }

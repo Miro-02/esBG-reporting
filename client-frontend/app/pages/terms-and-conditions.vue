@@ -23,9 +23,9 @@
         <div class="terms-layout">
 
           <!-- TOC -->
-          <aside class="toc">
-            <p class="toc-title">Contents</p>
-            <nav>
+          <aside class="toc" aria-label="Table of contents">
+            <p class="toc-title" id="toc-title">Contents</p>
+            <nav aria-labelledby="toc-title">
               <a
                 v-for="item in sections"
                 :key="item.id"
@@ -33,8 +33,9 @@
                 class="toc-link"
                 :class="{ active: activeSection === item.id }"
                 @click.prevent="scrollTo(item.id)"
+                :aria-current="activeSection === item.id ? 'page' : undefined"
               >
-                <span class="toc-num">{{ item.num }}</span>
+                <span class="toc-num" aria-hidden="true">{{ item.num }}</span>
                 {{ item.title }}
               </a>
             </nav>
@@ -283,10 +284,16 @@ const sections = [
   font-size: 0.82rem;
   color: #6a7099;
   transition: color 0.15s;
+  outline: none;
 }
 
 .toc-link:hover,
 .toc-link.active { color: #11298a; }
+
+.toc-link:focus-visible {
+  outline: 2px solid #11298a;
+  outline-offset: 2px;
+}
 
 .toc-link.active { font-weight: 700; }
 
@@ -372,7 +379,48 @@ const sections = [
 .ac-link {
   color: rgba(255,255,255,0.9);
   text-decoration: underline;
+  outline: none;
 }
 
 .ac-link:hover { color: #fff; }
+
+.ac-link:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .terms-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .toc {
+    position: static;
+    margin-bottom: 24px;
+  }
+  
+  .section {
+    padding: 48px 0;
+  }
+  
+  .hero {
+    min-height: 500px;
+  }
+  
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .sec-title {
+    font-size: 1rem;
+  }
+  
+  .section-heading {
+    gap: 12px;
+  }
+  
+  .acceptance-card {
+    padding: 24px 20px;
+  }
+}
 </style>

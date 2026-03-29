@@ -36,16 +36,29 @@
           <h2 class="section-title">Voices from the field</h2>
         </div>
 
-        <div class="testi-track-wrap">
-          <button class="testi-arrow" @click="prevSlide" aria-label="Previous">&#8249;</button>
-          <div class="testi-track">
-            <div class="testi-card" v-for="t in testimonials" :key="t.name">
-              <div class="stars">
+        <div class="testi-track-wrap" role="region" aria-label="Testimonials carousel">
+          <button 
+            class="testi-arrow" 
+            @click="prevSlide" 
+            aria-label="Previous testimonial"
+            tabindex="0"
+          >
+            &#8249;
+          </button>
+          <div class="testi-track" role="list">
+            <div 
+              class="testi-card" 
+              v-for="(t, i) in testimonials" 
+              :key="t.name"
+              role="listitem"
+              :aria-selected="activeSlide === i"
+            >
+              <div class="stars" aria-label="5 out of 5 stars" role="img">
                 <span v-for="s in 5" :key="s">★</span>
               </div>
               <p class="testi-quote">{{ t.quote }}</p>
               <div class="testi-author">
-                <div class="testi-avatar" :style="{ background: t.color }">{{ t.initials }}</div>
+                <div class="testi-avatar" :style="{ background: t.color }" aria-hidden="true">{{ t.initials }}</div>
                 <div>
                   <p class="testi-name">{{ t.name }}</p>
                   <p class="testi-role">{{ t.role }}</p>
@@ -53,16 +66,27 @@
               </div>
             </div>
           </div>
-          <button class="testi-arrow" @click="nextSlide" aria-label="Next">&#8250;</button>
+          <button 
+            class="testi-arrow" 
+            @click="nextSlide" 
+            aria-label="Next testimonial"
+            tabindex="0"
+          >
+            &#8250;
+          </button>
         </div>
 
-        <div class="testi-dots">
+        <div class="testi-dots" role="tablist" aria-label="Testimonials slides">
           <button
             v-for="(_, i) in testimonials"
             :key="i"
             class="dot"
             :class="{ active: activeSlide === i }"
             @click="activeSlide = i"
+            role="tab"
+            :aria-selected="activeSlide === i"
+            :aria-label="`Slide ${i + 1}`"
+            :tabindex="activeSlide === i ? 0 : -1"
           />
         </div>
       </AppContainer>
@@ -270,9 +294,17 @@ function nextSlide() {
   border-radius: 8px;
   padding-bottom: 2px;
   transition: background 0.15s;
+  outline: none;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .testi-arrow:hover { background: #f0f0f8; }
+
+.testi-arrow:focus-visible {
+  outline: 2px solid #11298a;
+  outline-offset: 2px;
+}
 
 .testi-track {
   display: grid;
@@ -364,9 +396,17 @@ function nextSlide() {
   cursor: pointer;
   padding: 0;
   transition: background 0.15s;
+  outline: none;
+  min-width: 16px;
+  min-height: 16px;
 }
 
 .dot.active { background: #11298a; }
+
+.dot:focus-visible {
+  outline: 2px solid #11298a;
+  outline-offset: 2px;
+}
 
 /* ── Featured ────────────────────────────────────── */
 .featured-section {
@@ -428,7 +468,57 @@ function nextSlide() {
   cursor: pointer;
   border-radius: 9999px;
   transition: background 0.15s;
+  outline: none;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .pill-btn:hover { background: #dde1f2; }
+
+.pill-btn:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 48px 0;
+  }
+  
+  .hero {
+    min-height: 500px;
+  }
+  
+  .hero-title {
+    font-size: 1.875rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .testi-track {
+    grid-template-columns: 1fr;
+  }
+  
+  .testi-track-wrap {
+    gap: 12px;
+  }
+  
+  .featured-section {
+    padding: 40px 0;
+  }
+  
+  .featured-card {
+    padding: 32px 24px;
+  }
+  
+  .featured-quote {
+    font-size: 1rem;
+  }
+  
+  .cta-section {
+    padding: 48px 0;
+  }
+}
 </style>

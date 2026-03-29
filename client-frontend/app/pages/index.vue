@@ -86,33 +86,7 @@
             <div class="map-wrap">
               <div class="map-bg">
                 <!-- Road lines to simulate a map -->
-                <svg class="map-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                  <!-- Grid streets -->
-                  <line x1="0" y1="60" x2="400" y2="60" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="0" y1="120" x2="400" y2="120" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="0" y1="180" x2="400" y2="180" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="0" y1="240" x2="400" y2="240" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="80" y1="0" x2="80" y2="300" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="160" y1="0" x2="160" y2="300" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="240" y1="0" x2="240" y2="300" stroke="#d8dce8" stroke-width="1.5"/>
-                  <line x1="320" y1="0" x2="320" y2="300" stroke="#d8dce8" stroke-width="1.5"/>
-                  <!-- Main roads -->
-                  <line x1="0" y1="150" x2="400" y2="150" stroke="#b8bfd8" stroke-width="4"/>
-                  <line x1="200" y1="0" x2="200" y2="300" stroke="#b8bfd8" stroke-width="4"/>
-                  <!-- Diagonal road -->
-                  <line x1="0" y1="300" x2="300" y2="0" stroke="#c8cedf" stroke-width="2.5"/>
-                  <!-- Block fills -->
-                  <rect x="82" y="62" width="76" height="56" fill="#e8eaf2" rx="2"/>
-                  <rect x="162" y="62" width="76" height="56" fill="#eceef5" rx="2"/>
-                  <rect x="82" y="122" width="76" height="56" fill="#eceef5" rx="2"/>
-                  <rect x="242" y="122" width="76" height="56" fill="#e8eaf2" rx="2"/>
-                  <rect x="162" y="182" width="76" height="56" fill="#e8eaf2" rx="2"/>
-                  <rect x="242" y="62" width="76" height="56" fill="#eceef5" rx="2"/>
-                  <!-- Pin -->
-                  <circle cx="200" cy="150" r="14" fill="#11298a" opacity="0.15"/>
-                  <circle cx="200" cy="150" r="8" fill="#11298a"/>
-                  <circle cx="200" cy="150" r="3" fill="#fff"/>
-                </svg>
+
               </div>
             </div>
           </div>
@@ -408,13 +382,16 @@ function nextSlide() {
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: #dde1f2;
   border: none;
   cursor: pointer;
   padding: 0;
+  margin: 0;
+  min-width: unset;
+  min-height: unset;
   transition: background 0.15s;
 }
 

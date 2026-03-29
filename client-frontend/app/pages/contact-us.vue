@@ -54,25 +54,66 @@
             <div class="form-body">
               <div class="form-row">
                 <div class="field-wrap">
-                  <label class="field-label">First name</label>
-                  <input v-model="form.firstName" class="field" type="text" placeholder="John" />
+                <label for="contact-first-name" class="field-label">First name</label>
+                <input 
+                  id="contact-first-name"
+                  v-model="form.firstName" 
+                  class="field" 
+                  type="text" 
+                  placeholder="John"
+                  aria-label="First name"
+                  aria-required="true"
+                  required
+                />
+              </div>
+              <div class="field-wrap">
+                <label for="contact-last-name" class="field-label">Last name</label>
+                <input 
+                  id="contact-last-name"
+                  v-model="form.lastName" 
+                  class="field" 
+                  type="text" 
+                  placeholder="Doe"
+                  aria-label="Last name"
+                  aria-required="true"
+                  required
+                />
                 </div>
-                <div class="field-wrap">
-                  <label class="field-label">Last name</label>
-                  <input v-model="form.lastName" class="field" type="text" placeholder="Doe" />
-                </div>
               </div>
               <div class="field-wrap">
-                <label class="field-label">Email address</label>
-                <input v-model="form.email" class="field" type="email" placeholder="john@company.com" />
+                <label for="contact-email" class="field-label">Email address</label>
+                <input 
+                  id="contact-email"
+                  v-model="form.email" 
+                  class="field" 
+                  type="email" 
+                  placeholder="john@company.com"
+                  aria-label="Email address"
+                  aria-required="true"
+                  required
+                />
               </div>
               <div class="field-wrap">
-                <label class="field-label">Company</label>
-                <input v-model="form.company" class="field" type="text" placeholder="Your company name" />
+                <label for="contact-company" class="field-label">Company</label>
+                <input 
+                  id="contact-company"
+                  v-model="form.company" 
+                  class="field" 
+                  type="text" 
+                  placeholder="Your company name"
+                  aria-label="Company"
+                />
               </div>
               <div class="field-wrap">
-                <label class="field-label">Subject</label>
-                <select v-model="form.subject" class="field field-select">
+                <label for="contact-subject" class="field-label">Subject</label>
+                <select 
+                  id="contact-subject"
+                  v-model="form.subject" 
+                  class="field field-select"
+                  aria-label="Subject"
+                  aria-required="true"
+                  required
+                >
                   <option value="">Select a topic</option>
                   <option>Platform inquiry</option>
                   <option>Partnership</option>
@@ -81,10 +122,26 @@
                 </select>
               </div>
               <div class="field-wrap">
-                <label class="field-label">Message</label>
-                <textarea v-model="form.message" class="field field-ta" rows="5" placeholder="Tell us how we can help…" />
+                <label for="contact-message" class="field-label">Message</label>
+                <textarea 
+                  id="contact-message"
+                  v-model="form.message" 
+                  class="field field-ta" 
+                  rows="5" 
+                  placeholder="Tell us how we can help…"
+                  aria-label="Message"
+                  aria-required="true"
+                  required
+                />
               </div>
-              <button class="pill-btn" @click="handleSubmit">Send message</button>
+              <button 
+                type="button"
+                class="pill-btn" 
+                @click="handleSubmit"
+                aria-label="Send message"
+              >
+                Send message
+              </button>
             </div>
           </div>
 
@@ -345,7 +402,37 @@ function handleSubmit() {}
   border-radius: 9999px;
   transition: background 0.15s;
   margin-top: 4px;
+  min-height: 44px;
+  min-width: 44px;
+  outline: none;
 }
 
 .pill-btn:hover { background: #0d1f70; }
+
+.pill-btn:focus-visible {
+  outline: 2px solid #11298a;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 1.875rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .section {
+    padding: 48px 0;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-layout {
+    gap: 40px;
+  }
+}
 </style>

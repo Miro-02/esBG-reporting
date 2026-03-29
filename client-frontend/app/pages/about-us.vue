@@ -297,7 +297,38 @@ const values = [
   cursor: pointer;
   border-radius: 9999px;
   transition: background 0.15s;
+  min-height: 44px;
+  min-width: 44px;
+  outline: none;
 }
 
 .pill-btn:hover { background: #dde1f2; }
+
+.pill-btn:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 48px 0;
+  }
+  
+  .hero {
+    height: auto;
+    min-height: 500px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .values-layout {
+    gap: 32px;
+  }
+}
 </style>
