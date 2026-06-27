@@ -11,4 +11,4 @@ frontend/.output/
 /public/storage
 ./vscode/
 .github/
-/.vscode
+/.vscode.env
