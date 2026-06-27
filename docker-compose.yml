@@ -101,7 +101,7 @@ services:
       - DB_NAME=${DB_DATABASE}
     volumes:
       - /var/www/backups/esbg:/backups
-      - ./server/storage/app/public:/storage:ro
+      - ./server/storage/app:/storage:ro
       - ./docker/backup/backup.sh:/backup.sh:ro
       - ./docker/backup/entrypoint.sh:/entrypoint.sh:ro
     entrypoint: ["/entrypoint.sh"]
